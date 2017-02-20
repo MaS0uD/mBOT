@@ -1,0 +1,175 @@
+[Status]
+Status=1
+
+[NickF]
+Status=1
+Times=5
+Secs=8
+Act=6
+Protects=oh
+TBT=60
+KBT=120
+WRes=Do NOT change your Nickname again! (This is warning! Next step you will be banned!)
+BRes=You warned one time! You're banned for <TBT> seconds.
+KRes=You're not welcome! <KC>
+Btype=10
+
+[JoinF]
+Status=1
+Times=4
+Secs=2
+Act=4
+Protects=0
+TBT=60
+KBT=120
+WRes=Join Flood detected!
+BRes=Join Flood detected! You're banned for <TBT> seconds.
+KRes=Join Flood detected! <KC>
+Btype=4
+
+[BigMsg]
+Status=1
+Max=350
+Act=3
+Protects=oh
+TBT=60
+KBT=120
+WRes=Big message detected! You used more than <BC> in one line. (This is warning! Next step you will be banned!)
+BRes=Big message detected! You're banned for <TBT> seconds.
+KRes=Big message detected! <KC>
+Btype=2
+
+[NoticeF]
+Status=1
+Act=6
+Protects=oh
+BTime=60
+KBTime=90
+Res=1
+WRes=Channel Notice is not premitted by regular users.
+BRes=Channel Notice is not premitted by regular users.
+KRes=Channel Notice is not premitted by regular users.
+Btype=1
+MStatus=0
+MCount=4
+MIn=60
+MMode=-
+MFor=240
+
+[CodeF]
+Status=1
+Times=6
+Act=3
+Protects=oh
+TBT=60
+KBT=120
+Max=5
+WRes=You used control codes (Colors, Bolds, ...) more than <LC> codes. Do NOT use control codes again! (This is warning! Next step you will be banned!)
+BRes=Code Flood detected! You're banned for <TBT> seconds.
+KRes=Code Flood detected! <KC>
+Btype=2
+
+[CtcpF]
+Status=1
+Times=5
+Secs=3
+Act=3
+Protects=oh
+TBT=60
+KBT=120
+WRes=Do NOT do any Channel CTCP again! (This is warning! Next step you will be banned!)
+BRes=CTCP Flood detected! You're banned for <TBT> seconds.
+KRes=CTCP Flood detected! <KC>
+Btype=2
+
+[Repeat]
+Status=1
+Times=3
+Secs=2
+Act=3
+Protects=ohv
+TBT=60
+KBT=120
+WRes=Do NOT do any Text repeat again! Calm down! (This is warning! Next step you will be banned!)
+BRes=Text Repeat detected! You're banned for <TBT> seconds.
+KRes=Text Repeat detected! <KC>
+Btype=2
+
+[Clone]
+Status=1
+Max=3
+Act=4
+Protects=o
+TBT=60
+KBT=120
+WRes=Clones found in your host. Part your other Nicks from channel! (This is warning! Next step you will be banned!)
+BRes=Clones found in your host. You're banned for <TBT> seconds.
+KRes=Clones found in your host. I did warned you to part your other Nicks from channel! <KC>
+Btype=2
+
+[Caps]
+Status=1
+Percents=50
+Act=3
+Protects=oh
+TBT=60
+KBT=120
+Percent=90
+WRes=Turn your Caps Lock OFF! You used more than <PCL>% Caps in your messages. (This is warning! Next step you will be banned!)
+BRes=CAPS LOCK detected! You're banned for <TBT> seconds.
+KRes=CAPS LOCK detected! I did warned you to turn OFF your Caps Lock! <KC>
+Btype=2
+
+[ASCII]
+Status=1
+Act=2
+Protects=oh
+TBT=60
+KBT=120
+Percent=10
+WRes=Do NOT use ASCII characters in you message again. (This is warning! Next step you will be banned!)
+BRes=ASCII detected! You're banned for <TBT> seconds.
+KRes=ASCII detected! I did warned you! <KC>
+Btype=2
+
+[FJP]
+Status=1
+Secs=2
+Act=4
+Protects=0
+TBT=60
+KBT=120
+WRes=None
+BRes=None
+KRes=None
+Btype=2
+
+[TextF]
+Status=1
+Times=4
+Secs=3
+Bytes=300
+BSecs=10
+Act=4
+Protects=oh
+BTime=90
+KBTime=320
+Res=0
+WRes=No reason specified.
+BRes=No reason specified.
+KRes=No reason specified.
+Btype=1
+MStatus=0
+MCount=4
+MIn=60
+MMode=-
+MFor=240
+
+[Exp1]
+Events=Text Action
+CheckOn=Ident Message
+Kind=Wildcard
+Exp=*test*asd
+Action=3
+Duration=0
+Reason=None.

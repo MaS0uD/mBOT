@@ -1,0 +1,56 @@
+LastSpoke
+<seen_nick> last spoke on <channel> <time> ago (<date>) saying: <message>
+Duration
+after spending <time> there.
+Duration2
+after spending some time there.
+NotSeen
+I have not seen <seen_nick>.
+Joined
+<seen_nick> (<address>) was last seen <time> ago (<date>) when I joined <channel>.
+Parting
+<seen_nick> (<address>) was last seen leaving <channel> <time> ago (<date>) stating: (<part_msg>)
+Quitting
+<seen_nick> (<address>) was last seen quiting On <channel> <time> ago (<date>) stating: (<quit_msg>)
+Acting
+<seen_nick> (<address>) was last seen acting on <channel> <time> ago (<date>). <on_chan>
+Found
+I found <number> matches to your query. Here are the <number2> most recent (sorted): <seen_nicks>. <seen_msg>
+LongNick
+That nick is too long. Nick length is limited in this Network.
+Load
+<seen_nick> (<address>) was last seen <time> ago (<date>) when I loaded this script.
+Nseen
+<nick> (<address>) was looking for you on <channel> <time> ago (<date>). (<network>)
+Joining
+<seen_nick> (<address>) was last seen joining <channel> <time> ago (<date>). <on_chan>
+ManyMatches
+I found <number> matches to your query; please refine it to see any output.
+Noonespoke
+No one has uttered a word yet here.
+Hasnotspoke
+<seen_nick> has not uttered a word yet.
+Self
+Looking for yourself, Eh?!
+Kicked
+<seen_nick> (<address>) was last seen kicked from <channel> by <kickedby> <time> ago (<date>) with the reason: (<kick_msg>)
+OnChan
+<seen_nick> is still there.
+Here
+<seen_nick> is right here!
+Me
+You found me!
+NoWildcards
+Wildcards are not allowed.
+NoMatch
+No matches were found.
+Kicking
+<seen_nick> (<address>) was last seen kicking <knick> from <channel> <time> ago (<date>) with the reason: (<kick_msg>) <on_chan>
+NickChange
+<seen_nick> (<address>) was last seen changing nick on <channel> to <newnick> <time> ago (<date>) <on_chan>
+Talking
+<seen_nick> (<address>) was last seen talking on <channel> <time> ago (<date>). <on_chan>
+Query
+<seen_nick> (<address>) was last seen sending me a private message <time> ago (<date>).
+NotOnChan
+<seen_nick> is not there anymore though...
