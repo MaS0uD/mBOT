@@ -66,7 +66,7 @@ alias Top.SetPeak {
     var %data = $hget(%table,%item)
     var %x = $wildtok(%data, E:*, 1, 32)
     var %peak = $iif($gettok(%x,2,58) != $null, $v1, 0)
-    if (%peak != null) && (%peak isnum) && ($3 > %peak) { hadd -m %table %item $reptok(%data,$findtok(%data,E:,1,32),$+(E:,%peak),1,32) }
+    if (%peak != null) && (%peak isnum 0-) && ($3 > %peak) { hadd -m %table %item $reptok(%data,$findtok(%data,E:,1,32),$+(E:,%peak),1,32) }
   }
 }
 
@@ -247,7 +247,7 @@ alias Top.IsValid {
   var %x = 1,%excepts = $mB.Read(Extra,Top,Ignore),%item
   while ($gettok(%excepts,%x,32)) {
     %item = $v1
-    if ($v1 iswm $1) { return $false }
+    if (%item == $1) || (%item iswm $1) { return $false }
     inc %x
   }
   return $true
@@ -258,23 +258,23 @@ alias Top.Save {
   while ($hget(%x)) {
     if (Top.* iswm $hget(%x)) {
       var %y = $v2
-      .write -c $mB.Top($+(%y,.db))
-      .hsave -i %y $mB.Top($+(%y,.db))
+      .write -c $mB.Top($+(%y,.mtdb))
+      .hsave -i %y $mB.Top($+(%y,.mtdb))
     }
     inc %x
   }
 }
 
 alias Top.Load {
-  var %x = $findfile($mB.Top,Top.*.db,0)
+  var %x = $findfile($mB.Top,Top.*.mtdb,0)
   while (%x) {
-    var %file = $findfile($mB.Top,Top.*.db,%x)
+    var %file = $findfile($mB.Top,Top.*.mtdb,%x)
     var %table = $gettok($nopath($noqt($longfn(%file))),1- $+ $calc($numtok($nopath($noqt($longfn(%file))),46) - 1),46)
     if (!$hget(%table)) { .hmake %table }
     if (!$isdir($mB.Top(Old\))) { .mkdir $mB.Top(Old\) }
     if (\Old\ !isin %file) {
       .hload -i %table $qt(%file)
-      .copy -o $qt($longfn(%file)) $qt($longfn($+($mB.Top(Old\),%table,.db)))
+      .copy -o $qt($longfn(%file)) $qt($longfn($+($mB.Top(Old\),%table,.mtdb)))
       ;.remove $qt($longfn(%file))
     }
     dec %x

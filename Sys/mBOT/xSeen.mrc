@@ -751,7 +751,7 @@ raw 005:*: {
   if ( $wildtok($1-,*NICKLEN=*,1,32) ) _writeini $_net nicklen $gettok($wildtok($1-,*NICKLEN=*,1,32),2,61)
 }
 
-#xseen.gethost off
+#xseen.gethost on
 raw 302:*: {
   if ( $2 ) {
     var %w = @GetHost.buffer, %poa = $iif($gettok($line(%w,1),3,32) == act,6-,5-)

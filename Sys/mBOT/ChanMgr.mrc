@@ -1,7 +1,7 @@
 ; ******************************************************
 ;           DC mBOT - Channel Manager
 ; ******************************************************
-alias CManager { mDialog mB.CManager }
+alias mB.ChanMgr { mDialog mB.CManager }
 dialog mB.CManager {
   title "Channel Manager"
   size -1 -1 232 193
@@ -16,7 +16,7 @@ dialog mB.CManager {
   button "&Remove", 7, 58 159 37 12
   box " Add or modify a channel ", 8, 105 32 124 144
   text "Chann&el:", 9, 107 56 30 10, right
-  edit "", 10, 139 55 84 10
+  edit "", 10, 139 55 84 10, autohs
   text "Net&work:", 11, 107 43 30 10, right
   combo 12, 139 42 84 35, edit drop
   text "&Features:", 13, 107 82 30 10, right
@@ -69,7 +69,7 @@ on *:dialog:mB.CManager:*:*:{
           if ($istok(%data,NickTr,32)) { did -c $dname 21 | did -rb $dname 20 }
           else { did -u $dname 21 | did -era $dname 20 $Trigger($1,$2) }
           var %x = 1,%items = AV ADV Limit Top Weather IP Quote Ping Seen Pro Daily
-          while (%x < 11) {
+          while (%x <= $numtok(%items,32)) {
             did $iif($istok(%data,$gettok(%items,%x,32),32),-s,-l) $dname 14 %x
             inc %x
           }
@@ -88,7 +88,8 @@ on *:dialog:mB.CManager:*:*:{
       if ($did(10) == $null) || (* * iswm $did(10)) { beep 2 | did -f $dname 10 | halt }
       if ($did(11) == $null) || (* * iswm $did(11)) { beep 2 | did -f $dname 11 | halt }
       if ($did(20) == $null) && ($did(21).state == 0) { beep 2 | did -f $dname 20 | halt }
-      var %x = 1,%items = AV ADV Limit Top Weather IP Quote Ping Seen Pro Daily ,%flags
+      var %items = AV ADV Limit Top Weather IP Quote Ping Seen Pro Daily
+      var %x = 1,%flags
       while ($did(14,%x)) {
         if ($did(14,%x).cstate) { %flags = $addtok(%flags,$gettok(%items,%x,32),32) }
         inc %x

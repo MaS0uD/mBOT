@@ -157,7 +157,7 @@ alias mB.Admin.AKill.Check {
           var %mask = $mask($+($1,!,$2,@,$3),5)
           if (%temp iswm %mask) {
             if (o !isincs $usermode) {
-              DoLog $date $time $network [Reports] N/A %mask found in the A-Kill list, but I couldn't kill because I was not an Oper.
+              DoLog $network [Reports] N/A %mask found in the A-Kill list, but I couldn't kill because I was not an Oper.
               return
             }
             mB.Queue h kill $1 $iif($mB.Read(Admin,List,%temp),$v1,A-banned.)

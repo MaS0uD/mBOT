@@ -67,6 +67,9 @@ dialog mB.Extra {
   text "System Info:", 59, 14 131 41 8, tab 45
   edit "", 60, 23 140 132 10, tab 45 autohs
   combo 61, 157 140 45 42, tab 45 size drop
+  text "Quote:", 80, 14 155 27 8, tab 45
+  edit "", 79, 23 164 132 10, autohs tab 45
+  combo 29, 157 164 45 42, size drop tab 45
   tab "Top10 Output Msgs.", 5
   box "", 62, 9 51 198 131, tab 5
   text "Top 10-100:", 63, 14 62 42 8, tab 5
@@ -104,7 +107,7 @@ on *:dialog:mB.Extra:*:*:{
     did -a $dname 2 +a 1 $chr(9) $+ Extra Settings
     did -b $dname 1,2
     didtok $dname 13 44 Words,Letters
-    didtok $dname 52,55,58,61,65,68,71 44 Notice Nick,Msg Nick,Msg Channel,Describe Channel
+    didtok $dname 29,52,55,58,61,65,68,71 44 Notice Nick,Msg Nick,Msg Channel,Describe Channel
     didtok $dname 49,74 44 Msg Channel,Describe Channel,Notice Channel
     mB.Extra.Init
   }
@@ -134,6 +137,8 @@ on *:dialog:mB.Extra:*:*:{
       %x Msgs PingM $did(58).sel
       if ($did(60) != $null) { %x Msgs SysInfo $v1 }
       %x Msgs SysInfoM $did(61).sel
+      if ($did(79) != $null) { %x Msgs Quote $v1 }
+      %x Msgs QuoteM $did(29).sel
       if ($did(64) != $null) { %x Msgs Top $v1 }
       %x Msgs TopM $did(65).sel
       if ($did(67) != $null) { %x Msgs TStat $v1 }
@@ -170,7 +175,7 @@ on *:dialog:mB.Extra:*:*:{
     elseif ($did == 42) {
       did -b $dname $did
       var %output = $Top.OptimizeAll,%msg = Optimization completed. $+ $crlf $+ $gettok(%output,2,32) useless items has been removed from $gettok(%output,1,32) databases.
-      .noop $input(%msg,iog,Operation succeed)
+      .noop $input(%msg,iog,Operation successful)
       did -r $dname 39
       var %x = 1
       while ($hget(%x)) {
@@ -214,6 +219,8 @@ alias mB.Extra.Init {
   %c 58 $iif($mB.Read(Extra,Msgs,PingM) != $null,$v1,1)
   if ($mB.Read(Extra,Msgs,SysInfo) != $null) { %a 60 $v1 }
   %c 61 $iif($mB.Read(Extra,Msgs,SysInfoM) != $null,$v1,1)
+  if ($mB.Read(Extra,Msgs,Quote) != $null) { %a 79 $v1 }
+  %c 29 $iif($mB.Read(Extra,Msgs,QuoteM) != $null,$v1,1)
   if ($mB.Read(Extra,Msgs,Top) != $null) { %a 64 $v1 }
   %c 65 $iif($mB.Read(Extra,Msgs,TopM) != $null,$v1,1)
   if ($mB.Read(Extra,Msgs,TStat) != $null) { %a 67 $v1 }
@@ -305,9 +312,10 @@ alias mB.Limiter {
     while (%x) {
       var %c = $chan(%x)
       if ($mB.Channels($network,%c).Limit) {
+        var %offset = $iif($mB.Read(Extra,Limiter,Offset) isnum 1-, %offset, 5)
         if ($server) && ($me isop %c) && ($network == $1) {
-          if (l !isincs $gettok($chan(%c).mode,1,32)) || (l isincs $gettok($chan(%c).mode,1,32) && $calc($chan(%c).limit - $nick(%c,0)) <= $int($calc($mB.Read(Extra,Limiter,Offset) / 2))) {
-            if ($chan(%c).limit != $calc($nick(%c,0) + $mB.Read(Extra,Limiter,Offset))) { mB.Queue -a h mode %c +l $calc($nick(%c,0) + $mB.Read(Extra,Limiter,Offset)) }
+          if (l !isincs $gettok($chan(%c).mode,1,32)) || (l isincs $gettok($chan(%c).mode,1,32) && $calc($chan(%c).limit - $nick(%c,0)) <= $int(%offset / 2)) {
+            if ($chan(%c).limit != $calc($nick(%c,0) + %offset)) { mB.Queue -a h mode %c +l $calc($nick(%c,0) + %offset) }
           }
         }
       }
@@ -316,32 +324,49 @@ alias mB.Limiter {
   }
 }
 
+
+alias mB.Quotes.NewID {
+  if (!$hget($1)) return $null
+  if ($mB.Read(Extra, Quotes, DynamicID) == 1) {
+    var %x = 1,%y = $hget($1, 0)
+    while (%x <= %y) {
+      if ($hget($1, %x).data == $null) { return %x }
+      inc %x
+    }
+    if (%x >= %y) { return $calc(%y + 1) }
+  }
+  else { return $calc($hget($1, $hget($1,0)).item + 1) }
+}
+
+; Items: $ctime AddedBy SaidBy HasBeenHit Quote
 alias mB.Quotes {
   if ($istok(Add Del Rep Get,$prop,32)) {
-    if (!$hget(Quotes)) { hmake Quotes }
+    var %gq = Quotes.Global
+    if (!$hget(%gq)) { hmake %gq }
     var %p = $prop
-    if (%p == Add) && ($0 > 2) {
-      ; $1 = Added by - $2- = Quote
-      HashTable Quotes $ctime $1-
+    if (%p == Add) && ($0 > 3) {
+      ; $1 = Added by - $2 = Said by - $3- = Quote
+      var %q = $gettok($remove($strip($3-),$chr(9)),1-,32)
+      HashTable %gq $mB.Quotes.NewID $ctime $1-2 0 $3-
       if ($isid) return $true
     }
     elseif (%p == Del) {
-      if ($1 isnum 1-) && ($hget(Quotes, $1) != $null) {
+      if ($1 isnum 1-) && ($hget(%gq, $1) != $null) {
         ; $1 = Quote ID
-        hdel Quotes $hget(Quotes, $1).item
+        hdel %gq $hget(%gq, $1).item
         if ($isid) return $true
       }
     }
     elseif (%p == Rep) {
       if ($1 isnum 1-) && ($2 != $null) {
         ; $1 = Quote ID - $2- = Quote
-        HashTable Quotes $hget(Quotes, $1).item $2-
+        HashTable %gq $hget(%gq, $1).item $2-
         if ($isid) return $true
       }
     }
     elseif (%p == Get) {
-      var %x = $iif($1 isnum 1-, $1, $rand(1, $hget(Quotes, 0)))
-      return $hget(Quotes,%x)
+      var %x = $iif($1 isnum 1-, $1, $rand(1, $hget(%gq, 0)))
+      return $hget(%gq,%x)
     }
   }
 }

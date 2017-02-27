@@ -7,11 +7,8 @@ alias GetWeather {
   .timer 1 2 Weather.Close
 }
 
-;; http://www.msn.com/en-us/weather/?q=Tehran
-
 alias Weather.Close {
-  var %x = 1,%msg = $Weather.Msg
-  ;var %x = 1,%msg = $iif($mB.Read(Extra,Msgs,Weather) != $null,$v1,$Weather.Msg)
+  var %x = 1,%msg = $iif($mB.Read(Extra,Msgs,Weather) != $null,$v1,$Weather.Msg)
   while ($hget(Weather,%x).item != $null) {
     var %m = $v1
     if (%m == Error) { %msg = $hget(Weather,Error) | break }
@@ -37,7 +34,7 @@ on *:SockOpen:Weather:{
     Weather.Close
     return
   }
-  sockwrite -nt $sockname GET $+(/data.aspx?weadegreetype=C&culture=en-US&weasearchstr=,$URLEncode($sock($sockname).mark)) HTTP/1.1
+  sockwrite -nt $sockname GET $+(/data.aspx?weadegreetype=C&culture=en-US&src=msn&weasearchstr=,$URLEncode($sock($sockname).mark)) HTTP/1.1
   sockwrite -n $sockname Host: $sock($sockname).addr
   sockwrite -n $sockname $str($crlf,2)
 }
@@ -58,6 +55,8 @@ on *:SockRead:Weather:{
       return
     }
     var %data
+    ;write x.txt %data
+    ;return
     sockread -f %data
     if ($regex(%data,/<weather/i)) {
       if ($regex(%data,/weatherlocationname="(.*?)"/i)) { HashTable Weather Location $regml(1) }

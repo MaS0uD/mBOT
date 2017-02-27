@@ -1,7 +1,7 @@
 ; ******************************************************
 ;       DC mBOT - Connection Manager
 ; ******************************************************
-alias ConMgr { mDialog ConnectionManager }
+alias mB.ConMgr { mDialog ConnectionManager }
 alias NewConnection { server $$1- }
 alias NewConnectionStuff {
   if ($1) {
@@ -173,7 +173,7 @@ on *:Dialog:ConnectionManager:*:*:{
       var %net = $remove($gettok($did(2).seltext,6,32),+fs,$chr(9))
       set $+(%,TempConnection.,%net) Yes
       if ($server) { var %Result = $input(Connect on active window?,qnvg,Confirmation) }
-      if (%Result == $yes) && ($server) { disconnect }
+      if (%Result == $yes) && ($server) { !disconnect }
       NewConnection $iif(%Result == $no,-m) %serv $iif($mB.Read(Connections,%net,BNCPassword),$v1)
     }
   }
@@ -215,11 +215,11 @@ dialog ServerManager {
   button "&Cancel", 29, 168 200 45 12, cancel
   box " Oper Status ", 30, 4 159 210 39
   text "Username:", 34, 10 171 32 8
-  edit "", 35, 48 170 65 10
+  edit "", 35, 48 170 65 10, autohs
   text "Password:", 36, 121 169 30 8, right
-  edit "", 37, 153 168 55 10
+  edit "", 37, 153 168 55 10, autohs
   text "Usermode:", 38, 10 184 32 8
-  edit "", 39, 48 183 40 10
+  edit "", 39, 48 183 40 10, autohs
   text "(This will be set upon oper login.)", 40, 91 184 86 8
 }
 

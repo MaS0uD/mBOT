@@ -1,7 +1,7 @@
 ; ******************************************************
 ;          DC mBOT - Members Manager
 ; ******************************************************
-alias MemberMgr { mDialog MemberMgr }
+alias mB.MemberMgr { mDialog MemberMgr }
 dialog MemberMgr {
   title "Member Manager [F3]"
   size -1 -1 226 263
@@ -16,18 +16,18 @@ dialog MemberMgr {
   list 7, 13 61 200 78, tab 5 size extsel
   box " Adding a new user or modify an existing one ", 9, 8 146 210 83, tab 5
   text "Mask (*!*@*):", 10, 11 159 48 10, tab 5 right
-  edit "", 11, 62 158 120 10, tab 5
+  edit "", 11, 62 158 120 10, tab 5 autohs
   text "Network:", 12, 11 173 48 10, tab 5 right
-  edit "", 13, 62 172 120 10, tab 5
+  edit "", 13, 62 172 120 10, tab 5 autohs
   check "All", 14, 185 172 30 10, tab 5
   text "Channel(s):", 15, 11 187 48 10, tab 5 right
-  edit "", 16, 62 186 120 10, tab 5
+  edit "", 16, 62 186 120 10, tab 5 autohs
   check "All", 17, 185 186 30 10, tab 5
   text "Access:", 18, 11 201 48 10, tab 5 right
   combo 19, 62 200 65 50, tab 5 size drop
   check "Ban Protected", 8, 133 200 49 10, tab 5
   text "Greet message:", 21, 11 215 48 10, tab 5 right
-  edit "", 22, 62 214 120 10, tab 5
+  edit "", 22, 62 214 120 10, tab 5 autohs
   text "(Optional)", 23, 183 215 28 10, tab 5
   button "Add", 24, 8 231 40 12, tab 5
   button "Remove", 26, 49 231 40 12, tab 5
@@ -38,19 +38,19 @@ dialog MemberMgr {
   list 31, 13 61 200 78, tab 29 size extsel
   box " Add a new or modify an existing one ", 33, 8 146 210 83, tab 29
   text "Mask (*!*@*):", 34, 11 159 48 10, tab 29 right
-  edit "", 35, 62 158 120 10, tab 29
+  edit "", 35, 62 158 120 10, tab 29 autohs
   text "Network:", 36, 11 173 48 10, tab 29 right
-  edit "", 37, 62 172 120 10, tab 29
+  edit "", 37, 62 172 120 10, tab 29 autohs
   check "All", 38, 185 172 30 10, tab 29
   text "Channel(s):", 39, 11 187 48 10, tab 29 right
-  edit "", 40, 62 186 120 10, tab 29
+  edit "", 40, 62 186 120 10, tab 29 autohs
   check "All", 41, 185 186 30 10, tab 29
   text "Action:", 42, 11 201 48 10, tab 29 right
   combo 43, 62 200 40 40, tab 29 size drop
   text "Type:", 44, 103 201 20 10, tab 29 right
   combo 45, 126 200 85 60, tab 29 size drop
   text "Kick Reason:", 46, 11 215 48 10, tab 29 right
-  edit "", 47, 62 214 150 10, tab 29
+  edit "", 47, 62 214 150 10, tab 29 autohs
   button "Add", 48, 8 231 40 12, tab 29
   button "Remove", 50, 49 231 40 12, tab 29
   button "Reset form", 51, 167 231 50 12, tab 29
@@ -184,8 +184,8 @@ on *:dialog:MemberMgr:*:*:{
       if (!$did(41).state) && (!$did(40)) { %errMsg = You need to define at least one channel name for this entry or mark the 'All' checkbox in front of it. | %errDid = 40 | goto xError }
       ; Mask = 35 -- Net = 37,38 -- Chan = 40,41 -- Action = 43 -- Type = 45 -- Reason = 47
       var %item = $did(35)
-      var %net = $iif($did(38).state == 1, *, $remove($did(37),$chr(32))
-      var %chan = $iif($did(41).state == 1, *, $remove($did(40),$chr(32))
+      var %net = $iif($did(38).state == 1, *, $remove($did(37),$chr(32)))
+      var %chan = $iif($did(41).state == 1, *, $remove($did(40),$chr(32)))
       var %act = $replace($did(43).seltext,Kick-Ban,kb)
       var %type = $calc($did(45).sel - 1)
       var %reason = $iif($did(47) != $null, $v1, Blacklisted.)

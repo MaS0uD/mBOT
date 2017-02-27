@@ -39,7 +39,7 @@ on *:Text:*:#:{
               if (%set != $null) {
                 mB.Write Channels $network %c %set
                 mB.Queue -a .notice $nick $+(%c,'s) settings have been set to: %set
-                if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+                if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               }
               return
             }
@@ -48,13 +48,13 @@ on *:Text:*:#:{
             if (%cmd == Akill) {
               if ($1 == $null) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) <-a|-r> <Ident@Address> [Reason] }
               if ($istok(-a -r,$1,32)) && (*@* iswm $2) {
-                if ($mB.Admin.AKill($2, $iif($3 != $null,$v1,A-banned.))) { mB.Queue -a .notice $nick $1 has been successfully $iif($1 == -a,added,removed) from Akill list. }
+                if ($mB.Admin.AKill($2, $iif($3- != $null,$v1,A-banned.))) { mB.Queue -a .notice $nick $1 has been successfully $iif($1 == -a,added to,removed from) Akill list. }
                 else {
                   if ($1 == -r) { mB.Queue -a .notice $nick $1 No such item has been found. }
                   else { mB.Queue -a .notice $nick An error occured while adding $1 to the Whitelist. Please check the parameters and try again. }
                   return
                 }
-                if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+                if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               }
               return
             }
@@ -63,7 +63,7 @@ on *:Text:*:#:{
             if (%cmd == Kill) && ($mB.Read(Admin,Cmds,Kill) == 1) {
               if ($OperStatus) {
                 mB.Queue -a kill $1 $iif($2-, $v1, No reason supplied.)
-                if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+                if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               }
               return
             }
@@ -73,14 +73,14 @@ on *:Text:*:#:{
               if ($OperStatus) && (*.*.*.*.* iswm $1) {
                 if (* $+ $1 $+ * iswm $address($me,5)) return
                 .gline $+(*@,$1) $iif($2- != $null, $v1, $mB.Read(Admin,AKill,Reason))
-                if ($Logger) { DoLog $date $time $network [Reports] $1 added $qt($1) G-lined. }
+                if ($Logger) { DoLog $network [Reports] $1 added $qt($1) G-lined. }
               }
             }
 
             :Kline
             if (%cmd == Kline) && ($mB.Read(Admin,Cmds,Kline) == 1) {
               if ($OperStatus) { mB.Queue -a kline $1 $iif($2-, $v1, No reason supplied.) }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -90,7 +90,7 @@ on *:Text:*:#:{
               else {
                 if ($istok(-wa -ba -wr -br,$1,32)) {
                   if ($2 == $null) { 
-                    if ($1 == -wa) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) $1 <Mask> <Network|*> <Channel|*> <Aop|Hop|Vop> [(NoBan)0-1] [Greet Message] }
+                    if ($1 == -wa) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) $1 <Mask> <Network|*> <Channel|*> <Aop|Hop|Vop|NoBan> [Greet Message] }
                     elseif ($1 == -ba) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) $1 <Mask> <Network|*> <Channel|*> <Ban|Kick|KickBan> [(Type)0-19] [Reason] }
                     elseif ($istok(-wr -br, $1, 32)) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) $1 <Mask> }
                     return
@@ -124,7 +124,7 @@ on *:Text:*:#:{
                     else { mB.Queue -a .notice $nick $2 No such item found in Blacklist. }
                   }
                 }
-                if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+                if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
                 return
               }
             }
@@ -132,70 +132,70 @@ on *:Text:*:#:{
             :Owner
             if (%cmd == Owner) {
               if (q isincs $nickmode) { %do +q $1- }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :DeOwner
             if (%cmd == DeOwner) {
               if (q isincs $nickmode) { %do -q $1- }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :Protect
             if (%cmd == Protect) {
               if (a isincs $nickmode) { %do +a $1- }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :DeProtect
             if (%cmd == DeProtect) {
               if (a isincs $nickmode) { %do -a $1- }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :Op
             if (%cmd == Op) {
               if (o isincs $nickmode) { %do +o $1- }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :DeOp
             if (%cmd == DeOp) {
               if (o isincs $nickmode) { %do -o $1- }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :Hop
             if (%cmd == Hop) {
               if (h isincs $nickmode) { %do +h $1- }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :DeHop
             if (%cmd == DeHop) {
               if (h isincs $nickmode) { %do -h $1- }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :Voice
             if (%cmd == Voice) {
               if (v isincs $nickmode) { %do +v $1- }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :DeVoice
             if (%cmd == DeVoice) {
               if (v isincs $nickmode) { %do -v $1- }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -204,7 +204,7 @@ on *:Text:*:#:{
               if ($1 == $me) || ($1 == $null) return
               if (*!*@* iswm $1) { mode $chan +b $1 }
               else { mB.Queue -a h mode $chan -hv+b $1 $1 $address($1,$iif($mB.Read(Managers,Config,BT) isnum 0-19,$v1,2)) }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -222,7 +222,7 @@ on *:Text:*:#:{
                 }
                 inc %a
               }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -230,7 +230,7 @@ on *:Text:*:#:{
             if (%cmd == Kick) {
               if ($1 == $null) || ($1 !ison $chan) return
               mB.Queue -a h kick $chan $1 $iif($2-,$v1,01No reason specified. $+ $chr(15))
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -238,7 +238,7 @@ on *:Text:*:#:{
             if (%cmd == KickBan) {
               if ($1 == $null) || ($1 !ison $chan) return
               mB.Queue -a h ban -k $chan $1 $iif($mB.Read(Managers,Config,BT) isnum 0-19,$v1,2) $iif($2-,$v1,01No reason specified. $+ $chr(15))
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -246,42 +246,42 @@ on *:Text:*:#:{
             if (%cmd == Mode) {
               if ($1 == $null) return
               mB.Queue -a h mode $chan $1-
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :RemLastBan
             if (%cmd == RemLastBan) {
               if ($eval($+(%,LastBan,$network,$chan),2) != $null) { mB.Queue -a h mode $chan -b $v1 }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :ClearBanList
             if (%cmd == ClearBanList) {
               ClearCentralList b $chan
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :ClearExceptList
             if (%cmd == ClearBanList) {
               ClearCentralList e $chan
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :ClearInviteList
             if (%cmd == ClearBanList) {
               ClearCentralList I $chan
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
             :Topic
             if (%cmd == Topic) {
               if ($gettok(%line,2-,32) != $null) { mB.Queue -a topic $chan $+($gettok(%line,2-,32),$chr(15)) }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -297,7 +297,7 @@ on *:Text:*:#:{
                 }
               }
               else { mB.Queue -a raw join $Safe($$1-) }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -305,7 +305,7 @@ on *:Text:*:#:{
             if (%cmd == Rejoin) {
               if ($1 == All) { RejoinAll $nick }
               else { Rejoin $iif($1,$1,$chan) }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -317,7 +317,7 @@ on *:Text:*:#:{
                 if ($1 == All) { !partall %res }
                 elseif ($1 ischan) { !part $1 %res }
               }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -325,7 +325,7 @@ on *:Text:*:#:{
             if (%cmd == Nick) {
               if ($1 == $null) return
               .nick $$1
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -333,7 +333,7 @@ on *:Text:*:#:{
             if (%cmd == Quit) {
               if ($1 == All) { scon -at1 !quit $iif($2-,$2-,$mB.QuitMsg) $+ $chr(15) }
               else { !quit $iif($1-,$1-,$mB.QuitMsg) $+ $chr(15) }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -345,31 +345,39 @@ on *:Text:*:#:{
                 return
               }
               mB.Queue -a msg $chan [Eval]: $+(02,$1-,) 04== $+(02,$iif($($1-,2) != $null,$v1,$!null),)
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return          
             }
 
             :UnsetAll
             if (%cmd == UnsetAll) {
               if ($IsOwner($network,$chan,$fulladdress)) { unsetall }
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return          
             }
 
             :SysInfo
             if (%cmd == SysInfo) {
               mB.Queue -a %send $mB.SysInfo
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
             ; Note to self:
             ; Write down all the commands here...
 
+            :Invite
+            if (%cmd == Invite) {
+              if ($1 != $null) && ($1 !ison $chan) {
+                mB.Queue -a cs invite $1 $chan
+                if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
+                return
+              }
+            }
             :Peak
             if (%cmd == Peak) {
               var %c = $iif($1 ischan, $1, $chan)
               mB.Queue -a %send $+(%c,'s) Peak:04 $Top.GetPeak($network, %c)
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -396,7 +404,7 @@ on *:Text:*:#:{
             :mBInfo
             if (%cmd == mBInfo) {
               %send $mB.mBInfo
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -404,7 +412,7 @@ on *:Text:*:#:{
             if (%cmd == IP) {
               if ($1 == $null) return
               Locate $network $chan $nick $1
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line)  }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -412,7 +420,7 @@ on *:Text:*:#:{
             if (%cmd == Weather) {
               if ($1 == $null) return
               GetWeather $network $chan $1-
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -424,8 +432,8 @@ on *:Text:*:#:{
 
             :ChanStat
             if (%cmd == ChanStat) {
-              mB.Queue -a %send $GetChanStat($chan,$chan)
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              mB.Queue -a %send $GetChanStat($iif($1 ischan, $1, $chan))
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -433,7 +441,7 @@ on *:Text:*:#:{
             if (%cmd == Slap) {
               if ($1 == $null) return
               mB.Queue -a describe $chan Slaps $iif($1 == $me,$nick,$1) around a bit with a large trout!
-              if ($Logger) { DoLog $date $time $network $chan $nick used $qt(%line) }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 
@@ -444,6 +452,7 @@ on *:Text:*:#:{
               var %MsgNick = msg $nick
               var %NoticeNick = .notice $nick
               var %DescribeChan = describe $chan
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               if ($1 == help) { .notice $nick $+($Trigger($network,$chan),$iif(%tr == $me,$chr(32)),Top) <10|20|30|40|50|60|70|80|90|100|merge|bind|del|clearcache/cc|optimize/opt|count/?|save> [[Word|Letter|Line] [FirstNick] [SecondNick]] | return }
               elseif ($istok(stats stat,%cmdx,32)) {
                 var %target = $iif($1 != $null,$1,$nick)
@@ -482,7 +491,7 @@ on *:Text:*:#:{
                     }
                   }
                   elseif ($1 == save) { Top.Save | .notice $nick Top10 databases saved successfully. | return }
-                  elseif ($istok(merge bind del clearcache cc help,$1,32)) {
+                  elseif ($istok(merge bind del delete clearcache cc help,$1,32)) {
                     if ($1 == merge) {
                       if ($2 == $null) && ($3 == $null) { mB.Queue -a .notice $nick Syntax: $+($Trigger($network,$chan),Top) Merge <ThisNick> <WithThisNick> }
                       else  { mB.Queue -a .notice $nick $Top.Merge($network,$chan,$2,$3-) }
@@ -493,7 +502,7 @@ on *:Text:*:#:{
                       else { mB.Queue -a .notice $nick $Top.Bind($network,$chan,$2,$3-) }
                       return
                     }
-                    elseif ($1 == del) {
+                    elseif ($istok(del delete,$1,32)) {
                       var %table = $+(Top.,$network,.,$chan)
                       if ($hget(%table,$2)) { hdel %table $2 | .notice $nick $2 has been removed from $chan Top10. }
                       return
@@ -538,7 +547,7 @@ on *:Text:*:#:{
     return
 
     :Error
-    if ($Logger) { DoLog $date $time $network $chan [Error] Something went wrong: $error }
+    if ($Logger) { DoLog $network $chan [Error] Something went wrong: $error }
     ResetError
   }
 }
@@ -793,7 +802,7 @@ on ^1:SNotice:*:{
   if (*Ident broken or* iswm $1-) return
   if (*Received identd response* iswm $1-) return
   if (*Client Connecting* iswm $1-) { 
-    if ($mB.Read(Admin,Reports,Connect) == 1) { DoLog $date $time $network [Reports] $9 $1- }
+    if ($mB.Read(Admin,Reports,Connect) == 1) { DoLog $network [Reports] $9 $1- }
     if ($mB.Read(Admin,AKill,Status) == 1) { mB.Admin.AKill.Check $9 $replace($remove($10,$chr(40),$chr(41)),$chr(64),$chr(32)) }
   }
   if ($mB.Read(Admin,Logs,SNotice) == 1) {
@@ -812,10 +821,10 @@ on ^1:SNotice:*:{
     }
     else { .write $qt(%file) $timestamp $network $1- }
   }
-  if (*did a /whois* iswm $1-) && ($mB.Read(Admin,Reports,Whois) == 1) { DoLog $date $time $network [Reports] N/A $1- }
-  if (*Client Exiting* iswm $1-) && (*Kill* iswm $1- || *Banned* iswm $1-) && ($mB.Read(Admin,Reports,Kill) == 1) { DoLog $date $time $network [Reports] N/A $1- }
-  if (*Client Exiting* iswm $1-) && ($mB.Read(Admin,Reports,Exit) == 1) { DoLog $date $time $network [Reports] N/A $1- }
-  if (*Failed* iswm $1- && *OPER* iswm $1-) && ($mB.Read(Admin,Reports,Fail) == 1) { DoLog $date $time $network [Reports] N/A $1- }
+  if (*did a /whois* iswm $1-) && ($mB.Read(Admin,Reports,Whois) == 1) { DoLog $network [Reports] N/A $1- }
+  if (*Client Exiting* iswm $1-) && (*Kill* iswm $1- || *Banned* iswm $1-) && ($mB.Read(Admin,Reports,Kill) == 1) { DoLog $network [Reports] N/A $1- }
+  if (*Client Exiting* iswm $1-) && ($mB.Read(Admin,Reports,Exit) == 1) { DoLog $network [Reports] N/A $1- }
+  if (*Failed* iswm $1- && *OPER* iswm $1-) && ($mB.Read(Admin,Reports,Fail) == 1) { DoLog $network [Reports] N/A $1- }
   if ($mB.Read(Admin,Logs,SNotice) == 1) { halt }
 }
 

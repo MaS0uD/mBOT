@@ -54,7 +54,7 @@ F12 { mB.About }
 
 mB.Author { return MaSOuD }
 mB.Ver { return v2.0.0b2 }
-mB.Version { return DC mBOT $mB.Ver by $+($mB.Author,.) (Running on 12m04IR08C $+(v,$version)) $+ $chr(15) }
+mB.Version { return DC mBOT $mB.Ver by $+($mB.Author,.) (Running on 12m04IR08C $+(v,$version) $+ $chr(15) }
 mB.Release { return 10 March 2015 }
 mB.InitialRelease { return 05 May 2008 }
 mB.Mail { return Masoud.1984@Gmail.com }
@@ -247,8 +247,8 @@ AccessList {
       var %pub = IP Weather Ping Top Seen Quotes
       if ($istok(%pub,$4,32)) { return $eval($+($,mB.Channels($1,$2).,$4),2) }
       else {
-        var %chanCmds = Owner DeOwner Protect Deprotect Op Deop Hop Dehop Voice Devoice Ban Unban Kick KickBan Mode RemLastBan ClearBanList ClearExceptList ClearInviteList Topic
-        var %manager = Join Part Rejoin Nick
+        var %chanCmds = Owner DeOwner Protect Deprotect Op Deop Hop Dehop Voice Devoice Ban Unban Kick KickBan Mode RemLastBan ClearBanList ClearExceptList ClearInviteList Topic Invite
+        var %manager = Join Part Rejoin Nick SysInfo Quote
         var %full = Quit Eval UnsetAll SysInfo
         var %akill = Akill Kill Gline Kline
         var %rest = Members Top
@@ -346,13 +346,13 @@ mB.Toolbar {
   %t mIRCOpt "mIRC Options" $mB.Imgs(Options.ico) "/mOpt"
   %s Rsep
   %t mB "mBOT Main Settings" $mB.Imgs(Set.ico) "/mBOT"
-  %t Pro "Channel Protections" $mB.Imgs(Protections.ico) "/mB.Pro"
-  %t Members "Member Area" $mB.Imgs(F-Sh.ico) "/MemberMgr"
-  %t CManager "Channel Manager" $mB.Imgs(Channel.ico) "/CManager"
   %t Extra "Extra Settings" $mB.Imgs(Extra.ico) "/mB.Extra"
-  %t Seen "xSeen System" $mB.Imgs(Seen.ico) "/xSeen"
+  %t AJoin "Connection Manager" $mB.Imgs(ConSetting.ico) "/mB.ConMgr"
+  %t CManager "Channel Manager" $mB.Imgs(Channel.ico) "/mB.ChanMgr"
+  %t Pro "Channel Protections" $mB.Imgs(Protections.ico) "/mB.Pro"
+  %t Members "Member Area" $mB.Imgs(F-Sh.ico) "/mB.MemberMgr"
   %t Admin "Server Administrator Settings" $mB.Imgs(Oper.ico) "/mB.Admin"
-  %t AJoin "Connection Manager" $mB.Imgs(ConSetting.ico) "/ConMgr"
+  %t Seen "xSeen System" $mB.Imgs(Seen.ico) "/xSeen"
   %s Msep
   %t Help "Help" $mB.Imgs(M1.ico) "/.run http://DeadCeLL.eu5.org/?p=mbot&help=1"
   %t DC-About $qt(About DC mBOT $mB.Ver) $mB.Imgs(About.ico) "/mB.About"
@@ -568,8 +568,8 @@ GetRootCmd {
   elseif ($istok(DeOwner dq deq,$1,32)) { return DeOwner }
   elseif ($istok(Protect Admin A,$1,32)) { return Protect }
   elseif ($istok(DeProtect DeAdmin dep da,$1,32)) { return DeProtect }
-  elseif ($istok(Op dp O,$1,32)) { return Op }
-  elseif ($istok(DeOp dop,$1,32)) { return DeOp }
+  elseif ($istok(Op o,$1,32)) { return Op }
+  elseif ($istok(DeOp dop dp,$1,32)) { return DeOp }
   elseif ($istok(Hop H,$1,32)) { return Hop }
   elseif ($istok(DeHop Deh dh,$1,32)) { return DeHop }
   elseif ($istok(Voice Vo V,$1,32)) { return Voice }
@@ -626,10 +626,10 @@ GetMethod {
 }
 
 GetChanStat {
-  if (!$1-2) return N/A
-  var %o = $nick($2,0,o),%h = $nick($2,0,h),%v = $nick($2,0,v),%r = $nick($2,0,r),%t = $nick($2,0)
+  if (!$1) return N/A
+  var %o = $nick($1,0,o),%h = $nick($1,0,h),%v = $nick($1,0,v),%r = $nick($1,0,r),%t = $nick($1,0)
   var %o.p = $round($calc(100 * (%o / %t)),2) $+ $chr(37),%h.p = $round($calc(100 * (%h / %t)),2) $+ $chr(37),%v.p = $round($calc(100 * (%v / %t)),2) $+ $chr(37),%r.p = $round($calc(100 * (%r / %t)),2) $+ $chr(37)
-  return 03[ $+ $2 Stats]02 Ops:04 %o ( $+ %o.p $+ )02 - Hops:04 %h ( $+ %h.p $+ )02 - Voices:04 %v ( $+ %v.p $+ )02 - Normal:04 %r ( $+ %r.p $+ )02 - Total:04 %t
+  return 03[ $+ $1 Stats]02 Ops:04 %o ( $+ %o.p $+ )02 - Hops:04 %h ( $+ %h.p $+ )02 - Voices:04 %v ( $+ %v.p $+ )02 - Normal:04 %r ( $+ %r.p $+ )02 - Total:04 %t
 }
 
 ToPascal {
@@ -693,9 +693,9 @@ mB.Start {
   AskForShortcut
   .fullname DC mBOT $mB.Ver
   mB.Toolbar
-  background -sf $mB.Imgs(mBOT.png)
-  background -l $mB.Imgs(Toolbar.png)
-  background -h $mB.Imgs(Switchbar.png)
+  background -sfe $mB.Imgs(mBOT.png)
+  background -lte $mB.Imgs(Black.png)
+  background -hex
   hOS SetIcon $window(-2).hwnd $noqt($mB.Imgs(mB.ico))
   mB.Remove Managers Logged
   .tray -i $mB.Imgs(mB.ico)
@@ -867,7 +867,7 @@ ShortcutCreator {
   var %script = $replace(%file,TempFile.tmp,ShortcutCreator.wsf)
   .rename $qt(%file) $qt(%script)
   .timer.run -m 1 1 .run $qt(%script)
-  .noop $input(mBOT's shortcut was successfully created on your Desktop!,ivgok30,Operation succeeded!)
+  .noop $input(mBOT's shortcut was successfully created on your Desktop!,ivgok30,Operation successful)
   .timer.shortcut 1 2 .remove $qt(%script)
 }
 
@@ -891,10 +891,16 @@ NoLong { return $iif($len($1) < 13,$1,$+($left($1,12),...)) }
 Logger { return $iif($mB.Read(Managers,Config,Logging) == 1, $true, $false) }
 
 DoLog {
+  if (!$server) return
+  var %ldir = $qt($+($noqt($mB.Dir), mBOT\Logs\))
+  if (!$exists(%ldir)) { mkdir %ldir }
   if (!$window(@Log)) {
     window -k0nz -t2,20,40,60,80,100 @Log
     echo 2 @Log $+($Tab,Date,$Tab,Time,$Tab,Network,$Tab,Channel,$Tab,Nickname,$Tab,Description)
-    echo @Log $Tab
   }
-  if ($1 != $null) { echo 1 @Log $+($Tab,$1,$Tab,$2,$Tab,$NoLong($3),$Tab,$NoLong($4),$Tab,$NoLong($5),$Tab,$6-) }
+  if ($1 != $null) {
+    echo 1 @Log $+($Tab,$date,$Tab,$time,$Tab,$NoLong($1),$Tab,$NoLong($2),$Tab,$NoLong($3),$Tab,$4-)
+    var %x = $+(mBOT\Logs\, $network, .mldb)
+    .write $mB.Dir(%x) $+($chr(40),$date $time,$chr(41)) $4-
+  }
 }

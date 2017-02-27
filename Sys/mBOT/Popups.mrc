@@ -7,7 +7,7 @@ menu Menubar {
   -
   Protections $+ $chr(9) $+ F2:mB.Pro
   -
-  Members $+ $chr(9) $+ F3:MemberMgr
+  Members $+ $chr(9) $+ F3:mB.MemberMgr
   -
   Extra Settings $+ $chr(9) $+ F4:mB.Extra
   -
@@ -15,9 +15,11 @@ menu Menubar {
   -
   IRCOp Settings $+ $chr(9) $+ F6:mB.Admin
   -
-  Connection Manager $+ $chr(9) $+ F7:ConMgr
+  Connection Manager $+ $chr(9) $+ F7:mB.ConMgr
   -
-  Help $+ $chr(9) $+ F11:Start_Help
+  Channel Manager $+ $chr(9) $+ F8:mB.ChanMgr
+  -
+  Help $+ $chr(9) $+ F11::
   -
   About $+ $chr(9) $+ F12:mB.About
   -
@@ -31,28 +33,30 @@ menu Channel,Status {
   $iif($active == Status Window,$iif($server,Disconnect,Connect)):$iif($server,quit,server)
   -
   &Settings
-  .Main Settings:mBOT
-  .-
-  .Protections:mB.Pro
+  .Main:mBOT
   .-
   .Extra:mB.Extra
   .-
-  .Members:MemberMgr
+  .Protections:mB.Pro
   .-
-  .Channel Manager:mB.CManager
+  .Members:mB.MemberMgr
   .-
-  .Seen System:xSeen
+  .Seen:xSeen
   .-
-  .IRCOp Settings:mB.Admin
+  .IRCOp:mB.Admin
   .-
-  .Connection Manager:ConMgr
+  .Connection:mB.ConMgr
+  .-
+  .Channel:mB.ChanMgr
   .-
   Directories
-  .Script Dir:.run $qt($mircdir)
+  .Root:.run $qt($mircdir)
   .-
-  .Logs Dir:.run $qt($logdir)
+  .Logs:.run $qt($logdir)
   -
   Help::
+  -
+  Clear:clear -a
   -
 }
 
