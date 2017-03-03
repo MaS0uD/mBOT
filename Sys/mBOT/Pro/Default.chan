@@ -1,10 +1,11 @@
 [Status]
 Status=1
+BCount=6
 
 [NickF]
 Status=1
-Times=5
-Secs=8
+Times=3
+Secs=60
 Act=6
 Protects=oh
 TBT=60
@@ -63,7 +64,7 @@ Act=3
 Protects=oh
 TBT=60
 KBT=120
-Max=5
+Max=8
 WRes=You used control codes (Colors, Bolds, ...) more than <LC> codes. Do NOT use control codes again! (This is warning! Next step you will be banned!)
 BRes=Code Flood detected! You're banned for <TBT> seconds.
 KRes=Code Flood detected! <KC>
@@ -164,12 +165,3 @@ MCount=4
 MIn=60
 MMode=-
 MFor=240
-
-[Exp1]
-Events=Text Action
-CheckOn=Ident Message
-Kind=Wildcard
-Exp=*test*asd
-Action=3
-Duration=0
-Reason=None.
