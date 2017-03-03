@@ -58,19 +58,20 @@ on *:dialog:mB.About:*:*:{
   if ($devent == init) {
     MDX MarkDialog $dname
     MDX SetMircVersion $version
-    MDX SetControlMDX $dname 2 Toolbar flat nodivider wrap list arrows > $Bars
     MDX SetBorderStyle $dname 1,2 simple
-    MDX SetFont $dname 3 +a 25 700 Ringbearer
-    MDX SetFont $dname 4 +a 14 700 Arial
+    MDX SetControlMDX $dname 2 Toolbar flat nodivider wrap list arrows > $Bars
+
     MDX SetColor $dname 1,2,3,4 background $rgb(199,199,199)
     MDX SetColor $dname 1,2,3,4 textbg $rgb(199,199,199)
     MDX SetColor $dname 1,3 text $rgb(65,141,255)
     MDX SetColor $dname 4 text $rgb(0,0,0)
-    MDX SetBorderStyle $dname 10,12,14,16,41 Staticedge
-    did -b $dname 1,2
+    MDX SetFont $dname 3 +a 25 700 Arial
+    MDX SetFont $dname 4 +a 14 700 Arial
+
     did -i $dname 2 1 bmpsize 32 32
-    did -i $dname 2 1 setimage icon normal $noqt($mB.Imgs(MB.ico))
+    did -i $dname 2 1 setimage icon normal $noqt($mB.Imgs(About.ico))
     did -a $dname 2 +a 1 $chr(9) $+ About DC mBOT
+    did -b $dname 1,2
     did -ra $dname 3 About DC mBOT $mB.Ver
     did -ra $dname 10 $mB.Author
     did -ra $dname 12 $right($mB.Ver,-1)

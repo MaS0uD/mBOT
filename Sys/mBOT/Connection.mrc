@@ -138,7 +138,7 @@ on *:Dialog:ConnectionManager:*:*:{
     MDX SetColor $dname 11,12,13,14 textbg $rgb(199,199,199)
     MDX SetColor $dname 11,13 text $rgb(65,141,255)
     MDX SetColor $dname 14 text $rgb(0,0,0)
-    MDX SetFont $dname 13 +a 25 700 Ringbearer
+    MDX SetFont $dname 13 +a 25 700 Arial
     MDX SetFont $dname 14 +a 14 700 Arial
     did -i $dname 12 1 bmpsize 32 32
     did -i $dname 12 1 setimage icon normal $noqt($mB.Imgs(ConSetting.ico))

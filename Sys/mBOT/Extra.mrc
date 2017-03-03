@@ -91,7 +91,6 @@ dialog mB.Extra {
 
 on *:dialog:mB.Extra:*:*:{
   if ($devent == init) {
-    hOS EnableCloseBox $dialog($dname).hwnd false
     MDX MarkDialog $dname
     MDX SetMircVersion $version
     MDX SetBorderStyle $dname 1,2 simple
@@ -100,7 +99,7 @@ on *:dialog:mB.Extra:*:*:{
     MDX SetColor $dname 1,2,3,4 textbg $rgb(199,199,199)
     MDX SetColor $dname 1,3 text $rgb(65,141,255)
     MDX SetColor $dname 4 text $rgb(0,0,0)
-    MDX SetFont $dname 3 +a 25 700 Ringbearer
+    MDX SetFont $dname 3 +a 25 700 Arial
     MDX SetFont $dname 4 +a 14 700 Arial
     did -i $dname 2 1 bmpsize 32 32
     did -i $dname 2 1 setimage icon normal $noqt($mB.Imgs(Extra.ico))
@@ -366,7 +365,17 @@ alias mB.Quotes {
     }
     elseif (%p == Get) {
       var %x = $iif($1 isnum 1-, $1, $rand(1, $hget(%gq, 0)))
-      return $hget(%gq,%x)
+      var %item = $hget(%gq,%x)
+      tokenize 32 %item
+      var %q = $5-,%qn = $hget(%gq,%x).item, %by = $3, %date = $asctime($1), %add = $2, %hit = $4 
+      var %msg = $iif($mB.Read(Extra, Quotes, Quote) != $null, $v1, $Quote.Msg)
+      var %x = 1, %l = <Quote> <QuoteNumber> <By> <Date> <AddedBy> <TotalHit>, %v = q qn by date add hit
+      while (%x <= $numtok(%l, 32)) {
+        %msg = $replace(%msg, $gettok(%l, %x, 32), $($+(%,$gettok(%v , %x, 32)),2))
+        inc %x
+      }
+      return %msg
     }
   }
 }
+alias Quote.Msg { return Quote #<QuoteNumber>: <Quote> (by <By> - Date: <Date> - Hit: <Hit> time(s). - Added by: <AddedBy> }

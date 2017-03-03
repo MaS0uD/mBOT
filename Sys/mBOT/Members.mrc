@@ -70,7 +70,7 @@ on *:dialog:MemberMgr:*:*:{
     MDX SetColor $dname 1,2,3,4 textbg $rgb(199,199,199)
     MDX SetColor $dname 3 text $rgb(65,141,255)
     MDX SetColor $dname 4 text $rgb(0,0,0)
-    MDX SetFont $dname 3 +a 25 700 Ringbearer
+    MDX SetFont $dname 3 +a 25 700 Arial
     MDX SetFont $dname 4 +a 14 700 Arial
     did -i $dname 2 1 BmpSize 32 32
     did -i $dname 2 1 SetImage Icon Normal $noqt($mB.Imgs(F-Sh.ico))

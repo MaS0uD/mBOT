@@ -38,7 +38,6 @@ dialog mB.Admin {
 
 on 1:dialog:mB.Admin:*:*:{
   if ($devent == init) {
-    hOS EnableCloseBox $dialog(mB.Admin).hwnd false
     MDX MarkDialog $dname
     MDX SetMircVersion $version
     MDX SetBorderStyle $dname 3,6 simple
@@ -47,7 +46,7 @@ on 1:dialog:mB.Admin:*:*:{
     MDX SetColor $dname 3,6,7,9 textbg $rgb(199,199,199)
     MDX SetColor $dname 3,7 text $rgb(65,141,255)
     MDX SetColor $dname 9 text $rgb(0,0,0)
-    MDX SetFont $dname 7 +a 25 700 Ringbearer
+    MDX SetFont $dname 7 +a 25 700 Arial
     MDX SetFont $dname 9 +a 14 700 Arial
     did -i $dname 6 1 bmpsize 32 32
     did -i $dname 6 1 setimage icon normal $noqt($mB.Imgs(Oper.ico))

@@ -55,8 +55,6 @@ on *:SockRead:Weather:{
       return
     }
     var %data
-    ;write x.txt %data
-    ;return
     sockread -f %data
     if ($regex(%data,/<weather/i)) {
       if ($regex(%data,/weatherlocationname="(.*?)"/i)) { HashTable Weather Location $regml(1) }

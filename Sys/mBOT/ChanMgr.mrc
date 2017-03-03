@@ -32,7 +32,6 @@ dialog mB.CManager {
 
 on *:dialog:mB.CManager:*:*:{
   if ($devent == init) {
-    hOS EnableCloseBox $dialog($dname).hwnd false
     MDX MarkDialog $dname
     MDX SetMircVersion $version
     MDX SetBorderStyle $dname 1,2 simple
@@ -41,7 +40,7 @@ on *:dialog:mB.CManager:*:*:{
     MDX SetColor $dname 1,2,3,4 textbg $rgb(199,199,199)
     MDX SetColor $dname 1,3 text $rgb(65,141,255)
     MDX SetColor $dname 4 text $rgb(0,0,0)
-    MDX SetFont $dname 3 +a 25 700 Ringbearer
+    MDX SetFont $dname 3 +a 25 700 Arial
     MDX SetFont $dname 4 +a 14 700 Arial
     did -i $dname 2 1 bmpsize 32 32
     did -i $dname 2 1 setimage icon normal $noqt($mB.Imgs(Channel.ico))

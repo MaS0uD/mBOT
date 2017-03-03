@@ -50,7 +50,7 @@ on *:Text:*:#:{
               if ($istok(-a -r,$1,32)) && (*@* iswm $2) {
                 if ($mB.Admin.AKill($2, $iif($3- != $null,$v1,A-banned.))) { mB.Queue -a .notice $nick $1 has been successfully $iif($1 == -a,added to,removed from) Akill list. }
                 else {
-                  if ($1 == -r) { mB.Queue -a .notice $nick $1 No such item has been found. }
+                  if ($1 == -r) { mB.Queue -a .notice $nick $1 No such item. }
                   else { mB.Queue -a .notice $nick An error occured while adding $1 to the Whitelist. Please check the parameters and try again. }
                   return
                 }
@@ -394,7 +394,7 @@ on *:Text:*:#:{
                 elseif ($1 == count) {  }
                 if ($istok(-d -r, $1, 32)) && ($2 isnum 1-) {
                   var %result = $($+($,mB.Quote($2).,$iif($1 == -d, Del, Rep)),2)
-                  mB.Queue -a .notice $nick Item has been successfully $iif($1 == -d, deleted., replaced.)
+                  if (%result) { mB.Queue -a .notice $nick Item has been successfully $iif($1 == -d, deleted., replaced.) }
                 }
                 else { mB.Queue -a .notice $nick Could not find the item. }
               }

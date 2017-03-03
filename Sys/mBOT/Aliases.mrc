@@ -39,25 +39,25 @@ hop { Rejoin }
 k { kick $chan $$1- }
 F1 { mBOT }
 F2 { mB.Pro }
-F3 { MemberMgr }
+F3 { mB.MemberMgr }
 F4 { mB.Extra }
 F5 { xSeen }
 F6 { mB.Admin }
-F7 { ConMgr }
-F8 { CManager }
+F7 { mB.ConMgr }
+F8 { mB.ChanMgr }
 F9 { SB.Settings }
-F10 { DCLogs }
-F11 { Start_Help }
+F10 {  }
+F11 {  }
 F12 { mB.About }
 
 ;------------------------------------------
 
 mB.Author { return MaSOuD }
-mB.Ver { return v2.0.0b2 }
+mB.Ver { return v2.0.0b3 }
 mB.Version { return DC mBOT $mB.Ver by $+($mB.Author,.) (Running on 12m04IR08C $+(v,$version) $+ $chr(15) }
-mB.Release { return 10 March 2015 }
+mB.Release { return 1 March 2017 }
 mB.InitialRelease { return 05 May 2008 }
-mB.Mail { return Masoud.1984@Gmail.com }
+mB.Mail { return M.Newsted@Yahoo.com }
 mB.Imgs { return $mB.Dir($+(Graphics\,$iif($1 != $null,$1))).qt }
 mB.Dir {
   var %path = $+($mircdir,Sys\,$iif($1 != $null,$1-))
@@ -112,9 +112,10 @@ mB.Queue {
 
 mB.Queue.Exec {
   if (!$window($1)) { mB.Queue }
-  ; mB.Queue.Arrange
+  ; mB.Queue.Rearrange
+  var %cid = $activecid
   if ($line($1,0) > 1) {
-    scon $line($1,1)
+    scid $line($1,1)
     var %x = $iif($mB.Read(Managers,Config,QueueItems) isnum 1-, $v1, 2)
     while (%x) {
       if ($line($1,0) > 1) {
@@ -123,6 +124,7 @@ mB.Queue.Exec {
       }
       dec %x
     }
+    scid %cid
   }
 }
 
@@ -768,12 +770,12 @@ MultiServMsg {
 
 DailyStuff.Init { .timer.DailyStuff -io 0:00 1 1 DailyStuff }
 DailyStuff {
-  mB.Queue -a scon -at1 amsg Preparing daily stuff, It's midnight here...
+  mB.Queue -a scon -at1 amsg Resetting Daily Statistics, It's midnight here...
   Top.ResetTotalStats
 }
 
 ; [ASCII Table]
-ASCII { 
+ASCII {
   if ($window(@ASCII)) { window -c @ASCII }
   window -al @ASCII
   aline @ASCII 04** Description:
@@ -901,6 +903,6 @@ DoLog {
   if ($1 != $null) {
     echo 1 @Log $+($Tab,$date,$Tab,$time,$Tab,$NoLong($1),$Tab,$NoLong($2),$Tab,$NoLong($3),$Tab,$4-)
     var %x = $+(mBOT\Logs\, $network, .mldb)
-    .write $mB.Dir(%x) $+($chr(40),$date $time,$chr(41)) $4-
+    .write $mB.Dir(%x) $+($chr(40),$date $time,$chr(41)) $2-
   }
 }
