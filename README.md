@@ -3,7 +3,7 @@ mIRC Bot
 
 Throw an mirc.exe file into the mBOT's root directory and run it.
 
-
+--
 // Channel Commands
 !Owner|q [Nick]
 !Deowner|dq|deq [Nick]
@@ -27,7 +27,7 @@ Throw an mirc.exe file into the mBOT's root directory and run it.
 !ClearInviteList|cil
 !Invite|inv <Nick>
 
-
+--
 // Special Access
 !UnsetAll
 !Eval <Code>
@@ -83,7 +83,7 @@ To modify the attributes:		!chan [#MyChan]Top Weather IP Ping Seen Pro
 		Usage: !quote count 
 
 
-
+--
 // Public (If enabled)
 !Slap <Nick>
 !ChanStat [Channel]
@@ -96,9 +96,9 @@ To modify the attributes:		!chan [#MyChan]Top Weather IP Ping Seen Pro
 
 
 !mBInfo
----------------
 
----------------
+
+--
 !Akill <Add|Del> <Address> [Reason]
 	- Add: Adds the address to mBOT internal Auto-kill list.
 		Usage: !akill add Some!Test@somehost.com You're not welcome!
@@ -108,7 +108,7 @@ To modify the attributes:		!chan [#MyChan]Top Weather IP Ping Seen Pro
 !Kill <Nick> [Reason]
 !Gline <*@Address> [Reason]
 !Kline <Nick|Address> [Reason]
----------------
+--
 Whitelist:
 To add: !Members wadd <Mask> <Network|*> <Channel|*> <Aop|Hop|Vop> [(NoBan)0-1] [Greet Message]
 To remove: !Members wdel <Mask>
@@ -116,6 +116,6 @@ To remove: !Members wdel <Mask>
 Blacklist:
 To add: !Members badd <Mask> <Network|*> <Channel|*> <Ban|Kick|KickBan> [(Type)0-19] [Reason]
 To remove: !Members bdel <Mask>
----------------
+--
 
 This list is incomplete. More details and commands will be added later.
