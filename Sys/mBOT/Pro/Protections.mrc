@@ -550,7 +550,7 @@ on *:dialog:mB.Pro:*:*:{
     MDX SetColor $dname 200,201,202,203 textbg $rgb(199,199,199)
     MDX SetColor $dname 202 text $rgb(65,141,255)
     MDX SetColor $dname 203 text $rgb(0,0,0)
-    MDX SetFont $dname 202 +a 25 700 Ringbearer
+    MDX SetFont $dname 202 +a 25 700 Arial
     MDX SetFont $dname 203 +a 14 700 Arial
     did -i $dname 201 1 BmpSize 32 32
     did -i $dname 201 1 SetImage Icon Normal $noqt($mB.Imgs(Protections.ico))
@@ -722,7 +722,7 @@ alias -l mB.Pro.ASCIICheck {
 }
 
 alias -l mB.Pro.CapsCheck {
-  if ($1) && ($len($2-) > 0) {
+  if ($1 != $null) && ($len($2-) > 10) {
     var %a = 1,%b = 0,%c = $len($2-),%d = ` 1 2 3 4 5 6 7 8 9 0 - = ; ' , . / \ ~ ! @ # $ % ^ & * ( ) _ + : " < > ? |
     while (%a <= %c) {
       var %x = $mid($2-,%a,1)
@@ -801,7 +801,7 @@ alias mB.Pro.Parse {
     ; Positive match found, Need to do some stuff to ban the user 
     return
   }
-  if ($istok(NickServ ChanServ OperServ MemoServ HostServ GameServ SeenServ HelpServ,%nick,32)) return
+  if ($istok(NickServ ChanServ OperServ MemoServ HostServ GameServ SeenServ HelpServ,%nick,32)) || (*.* iswm %nick) return
   if (%event == Notice) {
     if ($mB.Pro.Read(%chan,Status,Status) == 1) && ($mB.Pro.Read(%chan,NoticeF,Status) == 1) { mB.Pro.Actions NoticeF %nick %chan | return }
   }
@@ -847,9 +847,7 @@ alias mB.Pro.Parse {
         else { set $+(-u,$mB.Pro.Read(%chan,FJP,Secs)) $+(%,DC.FJP.,%net,.,%chan,.,%nick) Go }
       }
       if ($mB.Pro.Read(%chan,JoinF,Status) == 1) {
-        if ($($+(%,DC.JoinF.,%net,.,%chan),2) == $null) {
-          set $+(-u,$mB.Pro.Read(%chan,JoinF,Secs)) $+(%,DC.JoinF.,%net,.,%chan) 1
-        }
+        if ($($+(%,DC.JoinF.,%net,.,%chan),2) == $null) { set $+(-u,$mB.Pro.Read(%chan,JoinF,Secs)) $+(%,DC.JoinF.,%net,.,%chan) 1 }
         else { inc $+(%,DC.JoinF.,%net,.,%chan) }
         set $+(-u,$mB.Pro.Read(%chan,JoinF,Secs)) $+(%,DC.JoinF.,%net,.,%chan,.,%nick) 1
         if ($($+(%,DC.JoinF.,%net,.,%chan),2) >= $mB.Pro.Read(%chan,JoinF,Times)) {
@@ -912,7 +910,7 @@ alias mB.Pro.Actions {
       if ($2 ishop $3) { %m = $+(%m,h) }
       if ($2 isvoice $3) { %m = $+(%m,v) }
       if ($len(%m) > 0) { mB.Queue -a h mode $3 $+(-,%m) $str($2 $+ $chr(32),$v1) }
-      var %o = Spam Guest NickF NoticeF CodeF CtcpF TextF Caps ASCII FJP
+      var %o = Spam NickF NoticeF CodeF CtcpF TextF Caps ASCII FJP
       if ($istok(%o,$1,32)) {
         if ($mB.Pro.Read($3,$1,Act) == 2) {
           if ($+(%,DC.Warn.,$network,.,$3,.,$1) == $null) { set $+(%,DC.Warn.,$network,.,$3,.,$1) Warned | inc %w | goto end }
@@ -920,7 +918,7 @@ alias mB.Pro.Actions {
         }
         elseif ($mB.Pro.Read($3,$1,Act) == 3) || ($mB.Pro.Read($3,$1,Act) == 4) {
           if ($mB.Pro.Read($3,$1,Btype) isnum 0-9) {
-            if ($mB.Pro.Read($3,$1,Act) == 3) { mB.Queue -a h ban (-u,$mB.Pro.Read($3,$1,TBT)) $3 $2 $mB.Pro.Read($3,$1,Btype) }
+            if ($mB.Pro.Read($3,$1,Act) == 3) { mB.Queue -a h ban $+(-u,$mB.Pro.Read($3,$1,TBT)) $3 $2 $mB.Pro.Read($3,$1,Btype) }
             else { mB.Queue -a ban $3 $2 $mB.Pro.Read($3,$1,Btype) }
             inc %b
             goto end
@@ -974,6 +972,10 @@ alias mB.Pro.Actions {
       kick $3 $2 $DC.Reason($1,$2,$3,KRes)
       inc %k
       :end
+      if ($Logger) { 
+        var %names = Spamming, Nick Flood, Notice Flood, Excessive use of Control Codes, CTCP Flood, Text Flood (Repeating or Large messages.), Excessive use of Caps Lock, Excessive use of ASCII Codes, Fast Join/Part (Or Quit)
+        DoLog $network $3 $2 was banned for $gettok(%names,$findtok(%o,$1,1,32),44) $+ .
+      }
       set -u10 $+(%,DC.Ban.,$network,.,$3,.,$2) 1
       if ($mB.Pro.Read($3,$1,Res) == 1) {
         if (%WRes) { mB.Queue -a notice $2 $DC.Reason($1,$2,$3,WRes,$iif($4, $4)) | unset %WRes }
