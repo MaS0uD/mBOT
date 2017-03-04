@@ -49,6 +49,7 @@ on $*:Notice:/NickServ IDENTIFY password/Si:*:{
     if (%pass != $null) {
       var %cmd = $mB.Read(Connections,$network,NickServ)
       $replace(%cmd,<Nick>,%nick,<Password>,%pass)
+      .timer 1 3 ns update
     }
   }
 }
@@ -198,7 +199,7 @@ dialog ServerManager {
   text "Pa&ssword:", 13, 121 54 30 8, right
   edit "", 14, 153 53 55 10, autohs
   text "I&dent:", 15, 9 68 32 8
-  edit "", 16, 49 67 58 10, autohs
+  edit "", 16, 49 67 58 10, autohs disable
   text "&psyBNC Pass.:", 17, 111 68 40 8, right
   edit "", 18, 153 67 55 10, autohs
   check "&Username:", 1, 9 81 40 10

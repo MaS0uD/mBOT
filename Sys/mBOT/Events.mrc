@@ -46,11 +46,11 @@ on *:Text:*:#:{
 
             :Akill
             if (%cmd == Akill) {
-              if ($1 == $null) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) <-a|-r> <Ident@Address> [Reason] }
-              if ($istok(-a -r,$1,32)) && (*@* iswm $2) {
-                if ($mB.Admin.AKill($2, $iif($3- != $null,$v1,A-banned.))) { mB.Queue -a .notice $nick $1 has been successfully $iif($1 == -a,added to,removed from) Akill list. }
+              if ($1 == $null) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) <Add|Del> <Address> [Reason] }
+              if ($istok(add del,$1,32)) && (*@* iswm $2) {
+                if ($mB.Admin.AKill($2, $iif($3- != $null,$v1,A-banned.))) { mB.Queue -a .notice $nick $1 has been successfully $iif($1 == add,added to,removed from) Akill list. }
                 else {
-                  if ($1 == -r) { mB.Queue -a .notice $nick $1 No such item. }
+                  if ($1 == del) { mB.Queue -a .notice $nick $1 No such item. }
                   else { mB.Queue -a .notice $nick An error occured while adding $1 to the Whitelist. Please check the parameters and try again. }
                   return
                 }
@@ -70,11 +70,20 @@ on *:Text:*:#:{
 
             :Gline
             if (%cmd == Gline) && ($mB.Read(Admin,Cmds,Gline) == 1) {
-              if ($OperStatus) && (*.*.*.*.* iswm $1) {
-                if (* $+ $1 $+ * iswm $address($me,5)) return
-                .gline $+(*@,$1) $iif($2- != $null, $v1, $mB.Read(Admin,AKill,Reason))
-                if ($Logger) { DoLog $network [Reports] $1 added $qt($1) G-lined. }
+              if ($istok(add del,$1,32)) {
+                if ($OperStatus) && (*.*.*.*.* iswm $2) {
+                  if (* $+ $1 $+ * iswm $address($me,5)) return
+                  if ($1 == add) {
+                    var %res = $iif($3- != $null, $v1, $mB.Read(Admin,AKill,Reason))
+                    .gline $+(*@,$1) %res
+                    if ($Logger) { DoLog $network [Reports] $nick G-lined $qt($2) $+ . Reason: $iif($3- != $null, $v1, No reason specified.) }
+                  }
+                  else {
+                    ; delete should be added here
+                  }
+                }
               }
+              return
             }
 
             :Kline
@@ -86,31 +95,31 @@ on *:Text:*:#:{
 
             :Members
             if (%cmd == Members) {
-              if ($1 == $null) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) <-wa|-ba|-wr|-br> for more info. (-wa = Whitelist Add, -ba = Blacklist Add, -wr = Whitelist Remove, -br = Blacklist Remove) }
+              if ($1 == $null) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) <-wa|-ba|-wr|-br> for more info. (wadd = Whitelist Add, badd = Blacklist Add, wdel = Whitelist Remove, bdel = Blacklist Remove) }
               else {
-                if ($istok(-wa -ba -wr -br,$1,32)) {
+                if ($istok(wadd badd wdel bdel,$1,32)) {
                   if ($2 == $null) { 
-                    if ($1 == -wa) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) $1 <Mask> <Network|*> <Channel|*> <Aop|Hop|Vop|NoBan> [Greet Message] }
-                    elseif ($1 == -ba) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) $1 <Mask> <Network|*> <Channel|*> <Ban|Kick|KickBan> [(Type)0-19] [Reason] }
-                    elseif ($istok(-wr -br, $1, 32)) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) $1 <Mask> }
+                    if ($1 == wadd) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) $1 <Mask> <Network|*> <Channel|*> <Aop|Hop|Vop|NoBan> [Greet Message] }
+                    elseif ($1 == badd) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) $1 <Mask> <Network|*> <Channel|*> <Ban|Kick|KickBan> [(Type)0-19] [Reason] }
+                    elseif ($istok(wdel bdel, $1, 32)) { mB.Queue -a .notice $nick $+($Trigger($network,$chan),%cmd) $1 <Mask> }
                     return
                   }
-                  if ($1 == -wa) && (*!*@* iswm $2) && ($0 > 5) && ($istok(Aop Hop Vop, $5, 32)) {
+                  if ($1 == wadd) && (*!*@* iswm $2) && ($0 > 5) && ($istok(Aop Hop Vop, $5, 32)) {
                     var %mask = $2,%net = $3,%chan = $4,%acc = $5,%greet = $7-,%noBan = $iif($6 isnum 0-1, $v1)
-                    if ($mB.Members(-wa, %mask, %net, %chan, %acc, %noBan, %greet)) { mB.Queue -a .notice $nick %mask has been successfully added to Whitelist. }
+                    if ($mB.Members(wadd, %mask, %net, %chan, %acc, %noBan, %greet)) { mB.Queue -a .notice $nick %mask has been successfully added to Whitelist. }
                     else { mB.Queue -a .notice $nick An error occured while adding %mask to the Whitelist. Please check the parameters and try again. }
                   }
-                  elseif ($1 == -ba) && (*!*@* iswm $2) && ($0 > 5) && ($istok(Ban Kick KickBan, $5, 32)) {
+                  elseif ($1 == badd) && (*!*@* iswm $2) && ($0 > 5) && ($istok(Ban Kick KickBan, $5, 32)) {
                     var %mask = $2,%net = $3,%chan = $4,%act = $5,%rea = $7-,%type = $iif($6 isnum 0-19, $v1)
-                    if ($mB.Members(-ba, %mask, %net, %chan, %act, %type, %res)) { mB.Queue -a .notice $nick %mask has been successfully added to Blacklist. }
+                    if ($mB.Members(badd, %mask, %net, %chan, %act, %type, %res)) { mB.Queue -a .notice $nick %mask has been successfully added to Blacklist. }
                     else { mB.Queue -a .notice $nick An error occured while adding %mask to the Blacklist. Please check the parameters and try again. }
                   }
-                  elseif ($1 == -wr) && ($2 != $null) && (*!*@* iswm $2) {
-                    if ($mB.Members(-wd, $2)) { mB.Queue -a .notice $nick $2 has been successfully removed from Whitelist. }
+                  elseif ($1 == wdel) && ($2 != $null) && (*!*@* iswm $2) {
+                    if ($mB.Members(wdel, $2)) { mB.Queue -a .notice $nick $2 has been successfully removed from Whitelist. }
                     else { mB.Queue -a .notice $nick $2 No such item found in Whitelist. }
                   }
-                  elseif ($1 == -br) && ($2 != $null) && (*!*@* iswm $2) {
-                    if ($mB.Members(-bd, $2)) { mB.Queue -a .notice $nick $2 has been successfully removed from Blacklist. }
+                  elseif ($1 == bdel) && ($2 != $null) && (*!*@* iswm $2) {
+                    if ($mB.Members(bdel, $2)) { mB.Queue -a .notice $nick $2 has been successfully removed from Blacklist. }
                     else { mB.Queue -a .notice $nick $2 No such item found in Blacklist. }
                   }
                 }
@@ -378,14 +387,14 @@ on *:Text:*:#:{
                 if (%quote != $null) { mB.Queue -a %send %quote }
                 return
               }
-              elseif ($istok(-a -d -r count, $1, 32)) {
-                if ($1 == -a) {
+              elseif ($istok(add del rep count, $1, 32)) {
+                if ($1 == add) {
                   var %result = $mB.Quotes($2, $nick, $3-).Add
                   mB.Queue -a .notice $nick $iif(%result, Item has been successfully added., Error.)
                   return               
                 }
                 elseif ($1 == count) {  }
-                if ($istok(-d -r, $1, 32)) && ($2 isnum 1-) {
+                if ($istok(del rep, $1, 32)) && ($2 isnum 1-) {
                   var %result = $($+($,mB.Quotes($2).,$iif($1 == -d, Del, Rep)),2)
                   if (%result) { mB.Queue -a .notice $nick Item has been successfully $iif($1 == -d, deleted., replaced.) }
                 }
@@ -446,7 +455,7 @@ on *:Text:*:#:{
               var %NoticeNick = .notice $nick
               var %DescribeChan = describe $chan
               if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
-              if ($1 == help) { .notice $nick $+($Trigger($network,$chan),$iif(%tr == $me,$chr(32)),Top) <10|20|30|40|50|60|70|80|90|100|merge|bind|del|clearcache/cc|optimize/opt|count/?|save> [[Word|Letter|Line] [FirstNick] [SecondNick]] | return }
+              if ($1 == help) { .notice $nick $+($Trigger($network,$chan),$iif(%tr == $me,$chr(32)),Top) <10,20,...,100|merge|bind|del|clearcache|optimize|count|save> [[Word|Letter|Line] [FirstNick] [SecondNick]] | return }
               elseif ($istok(stats stat,%cmdx,32)) {
                 var %target = $iif($1 != $null,$1,$nick)
                 var %output = $Top.GetStats($network,$chan,%target)
@@ -467,7 +476,7 @@ on *:Text:*:#:{
                   mB.Queue -a $eval($+(%,$GetMethod(Top)),2) %output
                   return
                 }
-                elseif ($istok($chr(63) count,$1,32)) {
+                elseif ($1 == count) {
                   var %count = $hget($+(Top.,$network,.,$chan),0).item
                   if (%count > 2) { %count = $calc(%count - 2) }
                   mB.Queue -a .notice $nick There $iif(%count == 1,is,are) %count unique $+(item,$iif(%count != 1,s)) in $+($chan,.)
@@ -487,22 +496,22 @@ on *:Text:*:#:{
                   elseif ($istok(merge bind del delete clearcache cc help,$1,32)) {
                     if ($1 == merge) {
                       if ($2 == $null) && ($3 == $null) { mB.Queue -a .notice $nick Syntax: $+($Trigger($network,$chan),Top) Merge <ThisNick> <WithThisNick> }
-                      else  { mB.Queue -a .notice $nick $Top.Merge($network,$chan,$2,$3-) }
+                      else  { mB.Queue -a .notice $nick $Top.Merge($network,$chan,$2,$3) }
                       return
                     }
                     elseif ($1 == bind) {
                       if ($2 == $null) && ($3 == $null) { mB.Queue -a .notice $nick Syntax: $+($Trigger($network,$chan),Top) Bind <ThisNick> <ToThisNick> }
-                      else { mB.Queue -a .notice $nick $Top.Bind($network,$chan,$2,$3-) }
+                      else { mB.Queue -a .notice $nick $Top.Bind($network,$chan,$2,$3) }
                       return
                     }
                     elseif ($istok(del delete,$1,32)) {
                       var %table = $+(Top.,$network,.,$chan)
-                      if ($hget(%table,$2)) { hdel %table $2 | .notice $nick $2 has been removed from $chan Top10. }
+                      if ($hget(%table,$2)) { hdel %table $2 | .notice $nick $2 has been removed from $+($chan,'s) Top Database. }
                       return
                     }
                     elseif ($istok(clearcache cc,$1,32)) {
                       unset $eval($+(%,Recent.Top.,$network,$chan,.*),1)
-                      mB.Queue -a .notice $nick $+($chan,'s) Top10 caches has been removed.
+                      mB.Queue -a .notice $nick $+($chan,'s) Top caches are cleared.
                       return
                     }
                   }

@@ -104,10 +104,10 @@ on 1:dialog:mB.Admin:*:*:{
     if ($did == 74) && ($did(74).sel != $null) { did -e $dname 77 }
     if ($did == 76) { 
       if (* * iswm $did(75)) { beep 3 | return }
-      mB.Admin.AKill -a $did(75) $iif($did(41) != $null,$v1,A-banned.)
-      mB.Admin.AKill -l
+      mB.Admin.AKill add $did(75) $iif($did(41) != $null,$v1,A-banned.)
+      mB.Admin.AKill list
     }
-    if ($did == 77) && ($did(74).sel != $null) { mB.Admin.AKill -d $did(74).seltext | mB.Admin.AKill -l }
+    if ($did == 77) && ($did(74).sel != $null) { mB.Admin.AKill del $did(74).seltext | mB.Admin.AKill -l }
   }
 }
 
@@ -119,18 +119,18 @@ alias mB.Admin.Login {
 }
 
 alias mB.Admin.AKill {
-  if ($istok(-a -d -l,$1,32)) {
-    if ($1 == -a) {
+  if ($istok(add del list,$1,32)) {
+    if ($1 == add) {
       mB.Write Admin List $2 $3-
       if ($isid) { return $true }
     }
-    elseif ($1 == -d) {
+    elseif ($1 == del) {
       if ($mB.Read(Admin,List,$2) != $null) {
         mB.Remove Admin List $2
         if ($isid) { return $true }
       }
     }
-    elseif ($1 == -l) {
+    elseif ($1 == list) {
       if ($dialog(mB.Admin)) {
         did -r $v1 74
         var %x = 1,%y = $mB.Ini(Admin,List,0)

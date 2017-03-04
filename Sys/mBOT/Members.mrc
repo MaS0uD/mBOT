@@ -90,10 +90,10 @@ on *:dialog:MemberMgr:*:*:{
     did -c $dname 43 3
     var %x = 0
     while (%x < 20) { did -a MemberMgr 45 $mask(Nick!User@127-0-0-1.host.com,%x) | inc %x }
-    mB.Members -br
-    mB.Members -wr
-    mB.Members -wl
-    mB.Members -bl
+    mB.Members bres
+    mB.Members wres
+    mB.Members wlist
+    mB.Members blist
   }
   elseif ($devent == sclick) {
     var %errMsg,%errDid = 0
@@ -122,12 +122,12 @@ on *:dialog:MemberMgr:*:*:{
         did $iif(%noban == 1, -c, -u) $dname 8
         if (%greet != $null) { did -ra $dname 22 %greet }
       }
-      else { mB.Members -wr }
+      else { mB.Members wres }
     }
     elseif ($did == 26) && ($did(7).sel) {
-      mB.Members -wd $did(11)
-      mB.Members -wr
-      mB.Members -wl
+      mB.Members wdel $did(11)
+      mB.Members wres
+      mB.Members wlist
     }
     elseif ($did == 31) {
       did -a $dname 48 $iif($did(31).sel, Modify, Add)
@@ -154,7 +154,7 @@ on *:dialog:MemberMgr:*:*:{
         did -c $dname 45 $findtok($didtok($dname,43,44),$mask(Nick!User@127-0-0-1.host.com,$calc(%type - 1)),1,44)
         if (%rea != $null) { did -ra $dname 47 $v1 }
       }
-      else { mB.Members -br }
+      else { mB.Members bres }
     }
     elseif ($istok(14 17 38 41,$did,32)) { did $iif($did($did).state,-br,-e) $dname $calc($did - 1) }
     elseif ($did == 24) {
@@ -169,9 +169,9 @@ on *:dialog:MemberMgr:*:*:{
       var %acc = $replace($did(19).seltext,Auto Op,+o,Auto Hop,+h,Auto Voice,+v)
       var %noban = $did(8).state
       var %greet = $did(22)
-      mB.Members -wa %item %net %chan %acc %noban %greet
-      mB.Members -wr
-      mB.Members -wl
+      mB.Members wadd %item %net %chan %acc %noban %greet
+      mB.Members wres
+      mB.Members wlist
     }
     elseif ($did == 48) {
       if (!$did(35)) || (*!*@* !iswm $did(35)) { 
@@ -189,9 +189,9 @@ on *:dialog:MemberMgr:*:*:{
       var %act = $replace($did(43).seltext,Kick-Ban,kb)
       var %type = $calc($did(45).sel - 1)
       var %reason = $iif($did(47) != $null, $v1, Blacklisted.)
-      mB.Members -ba %item %net %chan %act %type %reason
-      mB.Members -br
-      mB.Members -bl
+      mB.Members badd %item %net %chan %act %type %reason
+      mB.Members bres
+      mB.Members blist
     }
     elseif ($did == 54) {
       mB.Write Members Settings WhiteList $did(28).state
@@ -214,12 +214,12 @@ alias -l Error.Show {
 }
 
 alias mB.Members {
-  if ($istok(-ba -bd -bl -wa -wd -wl -br -wr,$1,32)) { 
-    if ($istok(-ba -wa,$1,32)) {
-      var %w = mB.Write Members $+($iif($1 == -ba, BL_, WL_), $2)
+  if ($istok(badd bdel blist wadd wdel wlist bres wres,$1,32)) { 
+    if ($istok(badd wadd,$1,32)) {
+      var %w = mB.Write Members $+($iif($1 == badd, BL_, WL_), $2)
       %w Networks $3
       %w Channels $4
-      if ($1 == -ba) {
+      if ($1 == badd) {
         %w Action $5
         %w Type $iif($6 isnum 0-19, $v1, 2)
         %w Reason $iif($7-, $v1, Blacklisted.)
@@ -232,23 +232,23 @@ alias mB.Members {
         if ($isid) { return $true }
       }
     }
-    elseif ($istok(-bd -wd,$1,32)) {
-      var %item = $+($iif($1 == -bd, BL_, WL_), $2)
+    elseif ($istok(bdel wdel,$1,32)) {
+      var %item = $+($iif($1 == bdel, BL_, WL_), $2)
       if ($mB.Read(Members,%item,Networks) != $null) {
         mB.Remove Members %item
         if ($isid) { return $true }
         return
       }
     }
-    elseif ($istok(-bl -wl,$1,32)) {
+    elseif ($istok(blist wlist$1,32)) {
       if ($dialog(MemberMgr)) {
-        did -r MemberMgr $iif($1 == -wl, 7, 31)
+        did -r MemberMgr $iif($1 == wlist, 7, 31)
         if ($mB.Ini(Members,0) > 0) {
           var %x = 1
           while ($mB.Ini(Members,%x)) {
             var %item = $v1
             if (%item != Settings) {
-              if ($1 == -wl) && (WL_* iswm %item) {
+              if ($1 == wlist) && (WL_* iswm %item) {
                 var %addr = $right(%item,-3)
                 var %net = $mB.Read(Members,%item,Networks)
                 var %chan = $mB.Read(Members,%item,Channels)
@@ -258,7 +258,7 @@ alias mB.Members {
 
                 did -a MemberMgr 7 %addr $chr(9) $replace(%acc,+o,Auto Op,+h,Auto Hop,+v,Auto Voice) $chr(9) $iif(%net == *,All,$v1) $chr(9) $iif(%chan == *,All,$v1) $chr(9) $iif(%greet != $null && %greet != 0,%greet,None)
               }
-              elseif ($1 == -bl) && (BL_* iswm %item) {
+              elseif ($1 == bdel) && (BL_* iswm %item) {
                 var %mask = $right(%item,-3)
                 var %bnet = $mB.Read(Members,%item,Networks)
                 var %bchan = $mB.Read(Members,%item,Channels)
@@ -274,8 +274,8 @@ alias mB.Members {
         }
       }
     }
-    elseif ($istok(-br -wr, $1, 32)) && ($dialog(MemberMgr)) {
-      if ($1 == -br) { 
+    elseif ($istok(bres wres, $1, 32)) && ($dialog(MemberMgr)) {
+      if ($1 == bres) { 
         did -c MemberMgr 38,41
         did -c MemberMgr 43 3
         did -c MemberMgr 45 3
