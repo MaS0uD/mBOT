@@ -325,57 +325,71 @@ alias mB.Limiter {
 
 
 alias mB.Quotes.NewID {
-  if (!$hget($1)) return $null
+  if (!$hget($1)) { hmake $1 }
   if ($mB.Read(Extra, Quotes, DynamicID) == 1) {
-    var %x = 1,%y = $hget($1, 0)
+    var %x = 1,%y = $hget($1, 0).item
     while (%x <= %y) {
       if ($hget($1, %x).data == $null) { return %x }
       inc %x
     }
     if (%x >= %y) { return $calc(%y + 1) }
   }
-  else { return $calc($hget($1, $hget($1,0)).item + 1) }
+  else {
+    var %x = $calc($hget($1, 0).item + 1)
+    while (1) {
+      if ($hget($1, %x).data == $null) break
+      inc %x
+    }
+    return %x
+  }
 }
 
 ; Items: $ctime AddedBy SaidBy HasBeenHit Quote
 alias mB.Quotes {
   if ($istok(Add Del Rep Get,$prop,32)) {
-    var %gq = Quotes.Global
-    if (!$hget(%gq)) { hmake %gq }
+    var %table = Quotes.Global
     var %p = $prop
-    if (%p == Add) && ($0 > 3) {
+    if (!$hget(%table)) { hmake %table }
+    if (%p == Add) {
       ; $1 = Added by - $2 = Said by - $3- = Quote
       var %q = $gettok($remove($strip($3-),$chr(9)),1-,32)
-      HashTable %gq $mB.Quotes.NewID $ctime $1-2 0 $3-
+      hadd -m %table $mB.Quotes.NewID(%table) $ctime $1 $2 0 %q
       if ($isid) return $true
     }
     elseif (%p == Del) {
-      if ($1 isnum 1-) && ($hget(%gq, $1) != $null) {
+      if ($1 isnum 1-) && ($hget(%table, $1) != $null) {
         ; $1 = Quote ID
-        hdel %gq $hget(%gq, $1).item
+        hdel %table $hget(%table, $1).item
         if ($isid) return $true
       }
     }
     elseif (%p == Rep) {
       if ($1 isnum 1-) && ($2 != $null) {
         ; $1 = Quote ID - $2- = Quote
-        HashTable %gq $hget(%gq, $1).item $2-
+        hadd -m %table $hget(%table, $1).item $2-
         if ($isid) return $true
       }
     }
     elseif (%p == Get) {
-      var %x = $iif($1 isnum 1-, $1, $rand(1, $hget(%gq, 0)))
-      var %item = $hget(%gq,%x)
-      tokenize 32 %item
-      var %q = $5-,%qn = $hget(%gq,%x).item, %by = $3, %date = $asctime($1), %add = $2, %hit = $4 
-      var %msg = $iif($mB.Read(Extra, Quotes, Quote) != $null, $v1, $Quote.Msg)
-      var %x = 1, %l = <Quote> <QuoteNumber> <By> <Date> <AddedBy> <TotalHit>, %v = q qn by date add hit
-      while (%x <= $numtok(%l, 32)) {
-        %msg = $replace(%msg, $gettok(%l, %x, 32), $($+(%,$gettok(%v , %x, 32)),2))
-        inc %x
+      var %x = $iif($1 isnum 1-, $1, $rand(1, $hget(%table, 0).item))
+      if ($hget(%table,0).item > 0) {
+        var %item = $hget(%table,%x)
+        if (%item != $null) {
+          tokenize 32 %item
+          var %q = $5-,%qn = $hget(%table,%x).item, %by = $3, %date = $asctime($1), %add = $2, %hit = $4, %time = $asctime($1,HH:nn:ss), %date = $asctime($1,dd/mm/yyyy)
+          var %msg = $iif($mB.Read(Extra, Quotes, Quote) != $null, $v1, $Quote.Msg)
+          var %x = 1, %l = <Quote> <QNumber> <By> <Date> <Time> <DateTime> <AddedBy> <Hit>, %v = q qn by date time dt add hit
+          inc %hit
+          while (%x <= $numtok(%l, 32)) {
+            %msg = $replace(%msg, $gettok(%l, %x, 32), $eval($+(%,$gettok(%v , %x, 32)),2))
+            inc %x
+          }
+          hadd -m %table %qn $1-3 %hit $5-
+          return %msg
+        }
       }
-      return %msg
+      else { return There are no Quotes saved. }
     }
   }
 }
-alias Quote.Msg { return Quote #<QuoteNumber>: <Quote> (by <By> - Date: <Date> - Hit: <Hit> time(s). - Added by: <AddedBy> }
+alias Quote.Msg { return Quote #<QNumber>: <Quote> [by <By> - Date: <Date> - Hit: <Hit> time(s)] }

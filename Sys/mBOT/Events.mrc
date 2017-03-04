@@ -96,22 +96,12 @@ on *:Text:*:#:{
                     return
                   }
                   if ($1 == -wa) && (*!*@* iswm $2) && ($0 > 5) && ($istok(Aop Hop Vop, $5, 32)) {
-                    var %mask = $2
-                    var %net = $3
-                    var %chan = $4
-                    var %acc = $5
-                    var %noBan = $iif($6 isnum 0-1, $v1)
-                    var %greet = $7-
+                    var %mask = $2,%net = $3,%chan = $4,%acc = $5,%greet = $7-,%noBan = $iif($6 isnum 0-1, $v1)
                     if ($mB.Members(-wa, %mask, %net, %chan, %acc, %noBan, %greet)) { mB.Queue -a .notice $nick %mask has been successfully added to Whitelist. }
                     else { mB.Queue -a .notice $nick An error occured while adding %mask to the Whitelist. Please check the parameters and try again. }
                   }
                   elseif ($1 == -ba) && (*!*@* iswm $2) && ($0 > 5) && ($istok(Ban Kick KickBan, $5, 32)) {
-                    var %mask = $2
-                    var %net = $3
-                    var %chan = $4
-                    var %act = $5
-                    var %type = $iif($6 isnum 0-19, $v1)
-                    var %rea = $7-
+                    var %mask = $2,%net = $3,%chan = $4,%act = $5,%rea = $7-,%type = $iif($6 isnum 0-19, $v1)
                     if ($mB.Members(-ba, %mask, %net, %chan, %act, %type, %res)) { mB.Queue -a .notice $nick %mask has been successfully added to Blacklist. }
                     else { mB.Queue -a .notice $nick An error occured while adding %mask to the Blacklist. Please check the parameters and try again. }
                   }
@@ -390,10 +380,13 @@ on *:Text:*:#:{
               }
               elseif ($istok(-a -d -r count, $1, 32)) {
                 if ($1 == -a) {
+                  var %result = $mB.Quotes($2, $nick, $3-).Add
+                  mB.Queue -a .notice $nick $iif(%result, Item has been successfully added., Error.)
+                  return               
                 }
                 elseif ($1 == count) {  }
                 if ($istok(-d -r, $1, 32)) && ($2 isnum 1-) {
-                  var %result = $($+($,mB.Quote($2).,$iif($1 == -d, Del, Rep)),2)
+                  var %result = $($+($,mB.Quotes($2).,$iif($1 == -d, Del, Rep)),2)
                   if (%result) { mB.Queue -a .notice $nick Item has been successfully $iif($1 == -d, deleted., replaced.) }
                 }
                 else { mB.Queue -a .notice $nick Could not find the item. }
