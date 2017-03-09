@@ -26,9 +26,9 @@
 !UnsetAll
 !Eval <Code>
 !Nick <Nick>
-!Join|j <Channel>
-!Rejoin|rej
-!Part|p [Channel|All]
+!Join|j <#Channel>
+!Rejoin|rej [#Channel]
+!Part|p [#Channel|All]
 !Quit [Message]
 !SysInfo
 !Chan [#Channel] [AV ADV Limit Top Weather IP Ping Seen Pro Daily]
@@ -47,7 +47,7 @@
 	- Daily: Enables Daily Statistics for the channel.
 Usage:
 To view current settings of a channel:	!chan [#MyChan]
-To modify the attributes:		!chan [#MyChan]Top Weather IP Ping Seen Pro
+To modify the attributes:		!chan [#MyChan] Top Weather IP Ping Seen Pro
 
 
 !Top <merge|bind|del|clearcache|optimize|count|save> [Nick1] [Nick2]
@@ -57,7 +57,7 @@ To modify the attributes:		!chan [#MyChan]Top Weather IP Ping Seen Pro
 		Usage: !top bind ThisNick ToThisNick
 	- Del: Deletes the specified Nickname from Top Database.
 		Usage: !top del Someone
-	- ClearCache, CC: Clears the last generated and cached Top. Top updates every 10 minutes.
+	- ClearCache, CC: Clears the last generated and cached Top. Top updates every 10 minutes (upon request).
 		Usage: !top clearcache
 	- Optimize, opt: Optimizes current channel's Top Database and removes nicknames with no actual stats.
 		Usage: !top optimize
@@ -74,11 +74,11 @@ To modify the attributes:		!chan [#MyChan]Top Weather IP Ping Seen Pro
 	- Rep: Replaces Nth Quote with the new message.
 		Usage: !quote rep 10 A new or a modified version of the same quote.
 	- Count: Returns the total number of quotes in database.
-		Usage: !quote count 
+		Usage: !quote save 
 
 
 --
-// Public (If enabled)
+// Public commands (If enabled and/or added to the channel features.)
 !Slap <Nick>
 !ChanStat [Channel]
 !IP <Address>
