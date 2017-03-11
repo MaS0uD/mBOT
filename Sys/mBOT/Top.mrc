@@ -254,6 +254,7 @@ alias Top.IsValid {
 }
 
 alias Top.Save {
+  if (!$exists($mB.Top)) { .mkdir $mB.Top }
   var %x = 1
   while ($hget(%x)) {
     if (Top.* iswm $hget(%x)) {
