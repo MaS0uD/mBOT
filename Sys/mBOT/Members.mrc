@@ -240,7 +240,7 @@ alias mB.Members {
         return
       }
     }
-    elseif ($istok(blist wlist$1,32)) {
+    elseif ($istok(blist wlist,$1,32)) {
       if ($dialog(MemberMgr)) {
         did -r MemberMgr $iif($1 == wlist, 7, 31)
         if ($mB.Ini(Members,0) > 0) {
