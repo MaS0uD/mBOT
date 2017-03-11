@@ -815,6 +815,8 @@ on ^1:SNotice:*:{
   else {
     var %Log.Date = $replace($date,$chr(32),$chr(45),$chr(46),$chr(45),$chr(95),$chr(45),$chr(47),$chr(45),$chr(92),$chr(45))
     var %file = $mB.Dir($+(mBOT\SNotices\,%Log.Date,.txt)).qt
+    var %dir = $mB.Dir(mBOT\SNotices\)
+    if (!$exists($mB.Dir(mBOT\SNotices\))) { .mkdir $mB.Dir(mBOT\SNotices\) }
     if (!$exists(%file)) {
       .write -c $qt(%file)
       .write $qt(%file) Server Notice logfile created at: $date - $time
