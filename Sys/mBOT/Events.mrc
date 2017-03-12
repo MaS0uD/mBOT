@@ -73,14 +73,9 @@ on *:Text:*:#:{
               if ($istok(add del,$1,32)) {
                 if ($OperStatus) && (*.*.*.*.* iswm $2) {
                   if (* $+ $1 $+ * iswm $address($me,5)) return
-                  if ($1 == add) {
-                    var %res = $iif($3- != $null, $v1, $mB.Read(Admin,AKill,Reason))
-                    .gline $+(*@,$1) %res
-                    if ($Logger) { DoLog $network [Reports] $nick G-lined $qt($2) $+ . Reason: $iif($3- != $null, $v1, No reason specified.) }
-                  }
-                  else {
-                    ; delete should be added here
-                  }
+                  var %res = $iif($3- != $null, $v1, $mB.Read(Admin,AKill,Reason))
+                  .gline $+($iif($1 == del,-),*@,$1) $iif($1 == add, %res)
+                  if ($Logger) { DoLog $network [Reports] $nick G-line $iif($1 == add, added, deleted) $qt($2) $+ . $iif($1 == add, Reason: $iif($3- != $null, $v1, No reason specified.)) }
                 }
               }
               return
@@ -385,21 +380,21 @@ on *:Text:*:#:{
               if ($1 == $null) || ($1 isnum 1-) { 
                 var %quote = $mB.Quotes($iif($1 isnum 1-, $1, $null)).Get
                 if (%quote != $null) { mB.Queue -a %send %quote }
-                return
               }
-              elseif ($istok(add del rep count, $1, 32)) {
+              elseif ($istok(add del rep count save, $1, 32)) {
                 if ($1 == add) {
                   var %result = $mB.Quotes($2, $nick, $3-).Add
-                  mB.Queue -a .notice $nick $iif(%result, Item has been successfully added., Error.)
-                  return               
+                  mB.Queue -a .notice $nick $iif(%result, Item has been successfully added., Error.)      
                 }
-                elseif ($1 == count) {  }
+                elseif ($1 == count) { mB.Queue -a .notice $nick There are $hget(Quotes.Global,0).item Quotes. }
+                elseif ($1 == save) { Quotes.Save | mB.Queue -a .notice $nick Quotes has been saved. }
                 if ($istok(del rep, $1, 32)) && ($2 isnum 1-) {
                   var %result = $($+($,mB.Quotes($2).,$iif($1 == -d, Del, Rep)),2)
                   if (%result) { mB.Queue -a .notice $nick Item has been successfully $iif($1 == -d, deleted., replaced.) }
                 }
-                else { mB.Queue -a .notice $nick Could not find the item. }
               }
+              else { mB.Queue -a .notice $nick Could not find the item. }
+              if ($Logger) { DoLog $network $chan $nick used $qt(%line) }
               return
             }
 

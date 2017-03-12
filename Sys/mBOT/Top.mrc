@@ -259,23 +259,23 @@ alias Top.Save {
   while ($hget(%x)) {
     if (Top.* iswm $hget(%x)) {
       var %y = $v2
-      .write -c $mB.Top($+(%y,.mtdb))
-      .hsave -i %y $mB.Top($+(%y,.mtdb))
+      .write -c $mB.Top($+(%y,.hsh))
+      .hsave -i %y $mB.Top($+(%y,.hsh))
     }
     inc %x
   }
 }
 
 alias Top.Load {
-  var %x = $findfile($mB.Top,Top.*.mtdb,0)
+  var %x = $findfile($mB.Top,Top.*.hsh,0)
   while (%x) {
-    var %file = $findfile($mB.Top,Top.*.mtdb,%x)
+    var %file = $findfile($mB.Top,Top.*.hsh,%x)
     var %table = $gettok($nopath($noqt($longfn(%file))),1- $+ $calc($numtok($nopath($noqt($longfn(%file))),46) - 1),46)
     if (!$hget(%table)) { .hmake %table }
     if (!$isdir($mB.Top(Old\))) { .mkdir $mB.Top(Old\) }
     if (\Old\ !isin %file) {
       .hload -i %table $qt(%file)
-      .copy -o $qt($longfn(%file)) $qt($longfn($+($mB.Top(Old\),%table,.mtdb)))
+      .copy -o $qt($longfn(%file)) $qt($longfn($+($mB.Top(Old\),%table,.hsh)))
       ;.remove $qt($longfn(%file))
     }
     dec %x

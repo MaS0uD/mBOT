@@ -370,6 +370,10 @@ alias mB.Quotes {
         if ($isid) return $true
       }
     }
+    elseif (%p == Save) {
+      Quotes.Save
+      if ($isid) return $true
+    }
     elseif (%p == Get) {
       var %x = $iif($1 isnum 1-, $1, $rand(1, $hget(%table, 0).item))
       if ($hget(%table,0).item > 0) {
@@ -393,3 +397,6 @@ alias mB.Quotes {
   }
 }
 alias Quote.Msg { return Quote #<QNumber>: <Quote> [by <By> - Date: <Date> - Hit: <Hit> time(s)] }
+
+alias Quote.Save { .hsave -i Quotes.Global Quotes.Global.hsh }
+alias Quote.Load { .hload -i Quotes.Global Quotes.Global.hsh }

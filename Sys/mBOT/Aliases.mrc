@@ -54,7 +54,7 @@ F12 { mB.About }
 
 mB.Author { return MaSOuD }
 mB.Ver { return v2.0.0b3 }
-mB.Version { return DC mBOT $mB.Ver by $+($mB.Author,.) (Running on 12m04IR08C $+(v,$version) $+ $chr(15) }
+mB.Version { return DC mBOT $mB.Ver by $+($mB.Author,.) (Running on 12m04IR08C $+(v,$version,$chr(41),$chr(15)) }
 mB.Release { return 1 March 2017 }
 mB.InitialRelease { return 05 May 2008 }
 mB.Mail { return M.Newsted@Yahoo.com }
@@ -64,7 +64,7 @@ mB.Dir {
   if (!$prop) || ($prop == qt) { return $qt(%path) }
   elseif ($prop == sfn) { return $shortfn(%path) }
 }
-mB.Top { return $mB.Dir($+(mBOT\TopDB\,$1)).qt }
+mB.Top { return $mB.Dir($+(mBOT\TopDB\,$iif($1,$1))).qt }
 mB.Dll { return $mB.Dir($+(DLLs\,$1)).sfn }
 mB.Write { .writeini -n $qt($+($scriptdir,$1,.ini)) $2- }
 mB.Read { return $readini($qt($+($scriptdir,$1,.ini)),n,$2,$iif($3 != $null,$3)) }
@@ -303,6 +303,7 @@ IsSuspended { return $iif($mB.Read(Managers,$1,Suspend) == 1,$true,$false) }
 mB.CleanUp {
   mB.UTime
   Top.Save
+  Quotes.Save
   UnsetAll
   mB.Remove Managers Logged
   dll -u MDX.dll
@@ -706,6 +707,7 @@ mB.Start {
   DailyStuff.Init
   Title.Wel
   Top.Load
+  Quotes.Load
   ConnectionsOnOpen
 }
 
@@ -893,6 +895,7 @@ NoLong { return $iif($len($1) < 13,$1,$+($left($1,12),...)) }
 Logger { return $iif($mB.Read(Managers,Config,Logging) == 1, $true, $false) }
 
 DoLog {
+  echo -a here
   if (!$server) return
   var %ldir = $qt($+($noqt($mB.Dir), mBOT\Logs\))
   if (!$exists(%ldir)) { mkdir %ldir }
