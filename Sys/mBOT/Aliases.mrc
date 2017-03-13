@@ -303,7 +303,7 @@ IsSuspended { return $iif($mB.Read(Managers,$1,Suspend) == 1,$true,$false) }
 mB.CleanUp {
   mB.UTime
   Top.Save
-  Quotes.Save
+  Quote.Save
   UnsetAll
   mB.Remove Managers Logged
   dll -u MDX.dll
@@ -707,7 +707,7 @@ mB.Start {
   DailyStuff.Init
   Title.Wel
   Top.Load
-  Quotes.Load
+  Quote.Load
   ConnectionsOnOpen
 }
 
