@@ -398,5 +398,9 @@ alias mB.Quotes {
 }
 alias Quote.Msg { return Quote #<QNumber>: <Quote> [by <By> - Date: <Date> - Hit: <Hit> time(s)] }
 
-alias Quote.Save { .hsave -i Quotes.Global Quotes.Global.hsh }
-alias Quote.Load { .hload -i Quotes.Global Quotes.Global.hsh }
+alias Quote.Save {
+  if ($isfile($mB.Dir(mBOT\Quotes.Global.hsh))) { .hsave -i Quotes.Global $mB.Dir(mBOT\Quotes.Global.hsh) }
+}
+alias Quote.Load {
+  if ($isfile($mB.Dir(mBOT\Quotes.Global.hsh))) { .hload -i Quotes.Global $mB.Dir(mBOT\Quotes.Global.hsh) }
+}
