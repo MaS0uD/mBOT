@@ -53,7 +53,7 @@ To modify the attributes:		!chan [#MyChan] Top Weather IP Ping Seen Pro
 !Top <merge|bind|del|clearcache|optimize|count|save> [Nick1] [Nick2]
 	- Merge: Merges Nick1 with Nick2. In the end Nick2 will be deleted.
 		Usage: !top merge ThisNick WithThisNick
-	- Bind: Binds Nick1 to Nick2. All the stats for Nick1 will be counted for Nick2, sand taking stats from either nickname is the same.
+	- Bind: Binds Nick1 to Nick2. All the stats for Nick1 will be counted for Nick2, and taking stats from either nickname is the same.
 		Usage: !top bind ThisNick ToThisNick
 	- Del: Deletes the specified Nickname from Top Database.
 		Usage: !top del Someone
