@@ -19,7 +19,7 @@ alias mB.Pro.Ini {
 alias mB.Pro.WSet { .writeini -n $qt($scriptdirSettings.ini) $1 $2 $3 }
 alias mB.Pro.RSet { return $readini($qt($scriptdirSettings.ini),n,$1,$2) }
 alias mB.Pro.RemSet { .remini $qt($scriptdirSettings.ini) $1 $iif($2,$v1) }
-alias mB.Pro.Chks { return 11,12,13,14,15,16,17,19,20,21,23,25,26,27,98 }
+alias mB.Pro.Chks { return 11,13,14,15,16,17,19,20,21,23,25,26,27,98 }
 alias mB.Pro.Edits { return 28,37,38,39,41,42,44,46,47,60,61,65,67,99 }
 alias mB.Pro.No.Modes { return 3,4,6,7,29,30,31,32,33,34 }
 alias mB.Pro.Logo { return $+($chr(3),$chr(50),$chr(60),$chr(3),$chr(49),$chr(52),$chr(100),$chr(31),$chr(3),$chr(52),$chr(67),$chr(31),$chr(3),$chr(49),$chr(52),$chr(112),$chr(3),$chr(50),$chr(62),$chr(15)) }
@@ -29,8 +29,7 @@ alias mB.Pro.Reason {
   var %msg = $mB.Pro.Read($3,$1,$4)
   if (%msg == $null) { return $mB.Pro.Logo }
   var %finalMsg = $replace(%msg,<Nick>,$2,<TBT>,$mB.Pro.Read($3,$1,TBT),<KBT>,$mB.Pro.Read($3,$1,KBT),<KC>,$mB.Pro.Read($3,Status,KCount), $&
-    <BC>,$mB.Pro.Read($3,Status,BCount),<WC>,$mB.Pro.Read($3,Status,WCount),<BW>,$5,<Bi>,$5,<LC>,$mB.Pro.Read($3,CodeF,Max), $&
-    <PCL>,$mB.Pro.Read($3,Caps,Percent))
+    <BC>,$mB.Pro.Read($3,Status,BCount),<WC>,$mB.Pro.Read($3,Status,WCount))
   return $+(%finalMsg,$chr(15),$chr(32),$mB.Pro.Logo)
 }
 
@@ -449,7 +448,7 @@ dialog mB.Pro {
   list 201, 4 3 25 25, size
   text "Channel Protections", 202, 29 3 253 15
   text "Now it's time to keep your channel(s) safe! :)", 203, 30 18 252 10
-  button "&Help", 12, 111 173 35 12
+  ;button "&Help", 12, 111 173 35 12
   button "&OK", 9, 148 173 40 12
   button "&Apply", 10, 190 173 40 12
   button "&Close", 11, 232 173 40 12, cancel
@@ -585,15 +584,15 @@ on *:dialog:mB.Pro:*:*:{
       var %n = #$$?="Enter A Channel"
       if (%n == $null) || (%n == $chr(35)) { mB.Pro.Error You should enter a Channel name to add it to list. | return }
       var %Result = $input(Do you want to make a clear settings OR $+ $crlf $+ copy the settings from Default? $+ $crlf $+ Click NO to make a Clear/New settings.,qyvg,Add A Channel)
-      if (%Result == $yes) { .copy -o $+($shortfn($scriptdir),Default,.chan) $+($shortfn($scriptdir),%n,.chan) }
+      if (%Result == $yes) { .copy -o $qt($+($scriptdir,Default.chan)) $qt($+($scriptdir,%n,.chan)) }
       if (%Result == $no) { mB.Pro.Writes %n }
       mB.Pro.CLoading
     }
     elseif ($did == 4) {
       if ($did(2).seltext == $null) { mB.Pro.Error You should select a channel to remove it! | return }
       if ($did(2).seltext == Default) { mB.Pro.Error You can NOT remove default settings! | return }
-      var %Result = $input(Are you sure? $+ $crlf $+ You want to remove this channel settings?,qyvg,Removing A Channel)
-      if (%Result == $yes) { .remove $+($shortfn($scriptdir),$did(2).seltext,.chan) | mB.Pro.Error $did(2).seltext Database was removed! }
+      var %Result = $input(Are you sure? $+ $crlf $+ You want to remove selected channel settings?,qyvg,Removing A Channel)
+      if (%Result == $yes) { .remove $qt($+($scriptdir,$did(2).seltext,.chan)) | mB.Pro.Error $did(2).seltext channel settings have been removed! }
       if (%Result == $no) return
       mB.Pro.CLoading
     }
@@ -701,12 +700,12 @@ on *:dialog:mB.Pro.Tags:init:*:{
   did -a $dname 1 <TBT> $chr(9) Returns Temp Ban duration.
   did -a $dname 1 <KBT> $chr(9) Returns Kick/Ban duration.
   did -a $dname 1 <KC> $chr(9) Returns Kick Counter of the Channel.
-  did -a $dname 1 <BC> $chr(9) Returns Ban Counter ofthe Channel.
-  did -a $dname 1 <BW> $chr(9) Returns the Badword.
-  did -a $dname 1 <Bi> $chr(9) Returns the Bad Ident.
-  did -a $dname 1 <LC> $chr(9) Returns Limited Codes.
-  did -a $dname 1 <BML> $chr(9) Returns Big Message's limit.
-  did -a $dname 1 <PCL> $chr(9) Returns Limited Percentage of CapsLock.
+  did -a $dname 1 <BC> $chr(9) Returns Ban Counter of the Channel.
+  ;did -a $dname 1 <BW> $chr(9) Returns current Badword.
+  ;did -a $dname 1 <Bi> $chr(9) Returns current Bad Ident.
+  ;did -a $dname 1 <LC> $chr(9) Returns Limited Codes.
+  ;did -a $dname 1 <TL> $chr(9) Returns Text limit.
+  ;did -a $dname 1 <PCL> $chr(9) Returns Limited Percentage of CapsLock.
 }
 
 alias -l mB.Pro.ASCIICheck {
@@ -721,15 +720,19 @@ alias -l mB.Pro.ASCIICheck {
   }
 }
 
-alias -l mB.Pro.CapsCheck {
-  if ($1 != $null) && ($len($2-) > 10) {
-    var %a = 1,%b = 0,%c = $len($2-),%d = ` 1 2 3 4 5 6 7 8 9 0 - = ; ' , . / \ ~ ! @ # $ % ^ & * ( ) _ + : " < > ? |
+alias mB.Pro.CapsCheck {
+  if ($1 != $null) && ($len($2-) > 8) {
+    var %a = 1,%b = 0,%c = $len($2-)
     while (%a <= %c) {
       var %x = $mid($2-,%a,1)
-      if (%x != $null) && (%x != $chr(32)) && (!$istok(%d,%x,32)) && ($isupper(%x)) { inc %b }
+      if (%x isalpha) && ($isupper(%x)) { inc %b }
       inc %a
     }
     return $iif($mB.Pro.ToPercent(%b,%c,0) >= $mB.Pro.Read($1,Caps,Percent),$true,$false)
+
+    ;var %data = $regsubex($2-,/\W/g,)
+    ;var %caps = $round($calc(100 * $regex($2-,/[A-Z]/g) / $len(%data)),1)
+    ;return $iif(%caps > $mB.Pro.Read($1,Caps,Percent),$true,$false)
   }
 }
 
